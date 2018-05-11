@@ -1,8 +1,10 @@
 package ro.group305.passwalletandroidclient;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -97,12 +99,43 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             editUserAccount(userAccount);
         } else if ("Delete".equals(item.getTitle())) {
             Log.d(TAG, "Delete " + userAccount.getNickName());
+            deleteUserAccount(userAccount);
         } else if ("Add New".equals(item.getTitle())) {
             Log.d(TAG, "Add New ...");
             addUserAccount();
         }
 
         return super.onContextItemSelected(item);
+    }
+
+    private void deleteUserAccount(UserAccount userAccount) {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        try {
+                            byte[] newContent = userAccountDAO.deleteUserAccount(userAccount);
+                            if (newContent != null) {
+                                walletFileURI.saveFileContent(cryptographyService.encrypt(newContent));
+                                userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
+                            }
+                        } catch (Exception exception) {
+                            Log.e(TAG, exception.getMessage(), exception);
+                            ActivityUtils.displayErrorMessage(ManagePassWalletActivity.this, "Error creating passwallet item", exception.getMessage());
+                        }
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure to delete this entry?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
     private void onAddItemActionResult(int requestCode, int resultCode, Intent data) {
