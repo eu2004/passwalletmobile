@@ -3,6 +3,7 @@ package ro.group305.passwalletandroidclient;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -30,12 +31,17 @@ public class ManagePassWalletActivity extends AppCompatActivity {
 
         try {
             Intent intent = getIntent();
-            byte[] encryptedWalletFile = intent.getByteArrayExtra("encryptedWalletFile");
+            String encryptedWalletFileURIStr = intent.getStringExtra("encryptedWalletFileURI");
             String key = new String(intent.getByteArrayExtra("key"));
+            byte[] encryptedWalletFile = loadEncryptedWalletFileURI(encryptedWalletFileURIStr);
             createSearchView(new UserAccountDAO(decrypt(encryptedWalletFile, key)));
         } catch (Exception exception) {
             Log.e(TAG, exception.getMessage(), exception);
         }
+    }
+
+    private byte[] loadEncryptedWalletFileURI(String encryptedWalletFileURIStr) {
+        return new WalletFileURI(Uri.parse(encryptedWalletFileURIStr), getContentResolver()).getContent();
     }
 
     private void createSearchView(UserAccountDAO userAccountDAO) {

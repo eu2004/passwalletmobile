@@ -1,5 +1,7 @@
 package ro.group305.passwalletandroidclient;
 
+import android.util.Log;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -13,6 +15,8 @@ import java.util.List;
 import ro.group305.passwallet.model.UserAccount;
 
 public class UserAccountDAO {
+    private static final String TAG = "PassWallet";
+
     private List<UserAccount> userAccounts;
 
     public UserAccountDAO(byte[] decryptedWalletFile) throws IOException, XmlPullParserException {
@@ -33,6 +37,8 @@ public class UserAccountDAO {
     }
 
     private List<UserAccount> loadUsersAccounts(byte[] decryptedWalletFile) throws XmlPullParserException, IOException {
+        Log.i(TAG, new String(decryptedWalletFile));
+
         XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
         XmlPullParser myParser = xmlFactoryObject.newPullParser();
         myParser.setInput(new ByteArrayInputStream(decryptedWalletFile), null);

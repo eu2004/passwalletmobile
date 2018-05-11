@@ -13,12 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 public class OpenPassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
 
@@ -30,7 +24,43 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_pass_wallet);
 
-        final Button selectLocalPasswalletButton = findViewById(R.id.select_local_passwallet_button);
+        createBrowsePasswalletButton();
+
+        createOpenSelectedPasswalletButton();
+
+        initSelectedWalletURI();
+    }
+
+    private void initSelectedWalletURI() {
+        TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
+        String lastWalletURI = getPreferences(Context.MODE_PRIVATE).getString("selectedWalletURI", "");
+        selectedWalletName.setText(lastWalletURI);
+        if (lastWalletURI.length() > 0) {
+            selectedWalletURI = Uri.parse(lastWalletURI);
+        }
+    }
+
+    private void createOpenSelectedPasswalletButton() {
+        Button openSelectedPasswalletButton = findViewById(R.id.open_passwallet_button);
+        openSelectedPasswalletButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!WalletFileURI.isValid(selectedWalletURI)) {
+                    Log.e(TAG, "No wallet file is selected or file path is incorrect!");
+                    return;
+                }
+
+                Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
+                intent.putExtra("encryptedWalletFileURI", selectedWalletURI.toString());
+                EditText password = findViewById(R.id.walletKey);
+                intent.putExtra("key", password.getText().toString().getBytes());
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void createBrowsePasswalletButton() {
+        Button selectLocalPasswalletButton = findViewById(R.id.browse_passwallet_file_button);
         selectLocalPasswalletButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -40,26 +70,6 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                 }
             }
         });
-
-        final Button openSelectedPasswalletButton = findViewById(R.id.open_passwallet_button);
-        openSelectedPasswalletButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    InputStream inputStream = getContentResolver().openInputStream(selectedWalletURI);
-                    loadEncryptedWalletFile(inputStream);
-                } catch (FileNotFoundException e) {
-                    Log.e(TAG, "File not found: " + e.getMessage(), e);
-                }
-            }
-        });
-
-        TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
-        String lastWalletURI = getPreferences(Context.MODE_PRIVATE).getString("selectedWalletURI", "");
-        selectedWalletName.setText(lastWalletURI);
-        if (lastWalletURI.length() > 0) {
-            selectedWalletURI = Uri.parse(lastWalletURI);
-        }
     }
 
     @Override
@@ -92,38 +102,5 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/xml");
         startActivityForResult(intent, READ_REQUEST_CODE);
-    }
-
-    private void loadEncryptedWalletFile(InputStream is) {
-        byte[] encryptedWalletFile = null;
-        try {
-            encryptedWalletFile = loadEncryptedWalletFileContent(is);
-        } catch (IOException exception) {
-            Log.e(TAG, exception.getMessage(), exception);
-        }
-
-        Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
-        intent.putExtra("encryptedWalletFile", encryptedWalletFile);
-        EditText password = findViewById(R.id.walletKey);
-        intent.putExtra("key", password.getText().toString().getBytes());
-        startActivity(intent);
-    }
-
-    private byte[] loadEncryptedWalletFileContent(InputStream in) throws IOException {
-        List<Byte> xmlFileContent = new ArrayList<>();
-        byte[] buffer = new byte[256];
-        int count = -1;
-        while ((count = in.read(buffer)) != -1) {
-            for (int i = 0; i < count; i++) {
-                xmlFileContent.add(buffer[i]);
-            }
-        }
-        Byte[] encryptedArray = xmlFileContent.toArray(new Byte[]{});
-        byte[] encrypted = new byte[encryptedArray.length];
-        int i = 0;
-        for (byte e : encryptedArray) {
-            encrypted[i++] = e;
-        }
-        return encrypted;
     }
 }
