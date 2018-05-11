@@ -106,7 +106,6 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                 }
                 break;
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void browseForEncryptedWalletFile() {

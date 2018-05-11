@@ -2,11 +2,16 @@ package ro.group305.passwalletandroidclient.utils;
 
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
+import ro.eu.passwallet.model.UserAccount;
 import ro.group305.passwalletandroidclient.utils.FileUtils;
 
 public class WalletFileURI {
@@ -21,15 +26,31 @@ public class WalletFileURI {
         this.contentResolver = contentResolver;
     }
 
-    public synchronized byte[] getContent() {
-        if (walletFileContent == null) {
-            try (InputStream inputStream = contentResolver.openInputStream(walletFileURI)) {
-                walletFileContent = FileUtils.loadFileContentFromStream(inputStream);
-            } catch (IOException exception) {
-                Log.e(TAG, exception.getMessage(), exception);
+    public byte[] getContent() {
+        synchronized (walletFileURI) {
+            if (walletFileContent == null) {
+                try (InputStream inputStream = contentResolver.openInputStream(walletFileURI)) {
+                    walletFileContent = FileUtils.loadFileContentFromStream(inputStream);
+                } catch (IOException exception) {
+                    Log.e(TAG, exception.getMessage(), exception);
+                }
             }
+            return walletFileContent;
         }
-        return walletFileContent;
+    }
+
+    public void saveFileContent(byte[] passwalletContent) throws IOException {
+        synchronized (walletFileURI) {
+            ParcelFileDescriptor selectedWallet =
+                    contentResolver.
+                            openFileDescriptor(walletFileURI, "w");
+            FileOutputStream fileOutputStream =
+                    new FileOutputStream(selectedWallet.getFileDescriptor());
+            fileOutputStream.write(passwalletContent);
+            fileOutputStream.close();
+            selectedWallet.close();
+            walletFileContent = passwalletContent;
+        }
     }
 
     public static boolean isValid(Uri selectedWalletURI) {

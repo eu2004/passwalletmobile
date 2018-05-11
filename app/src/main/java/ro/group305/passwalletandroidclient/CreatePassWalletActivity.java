@@ -3,22 +3,21 @@ package ro.group305.passwalletandroidclient;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ro.group305.passwallet.service.crypt.CryptographyService;
+import ro.eu.passwallet.service.crypt.CryptographyService;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 import ro.group305.passwalletandroidclient.utils.FileUtils;
 import ro.group305.passwalletandroidclient.utils.PasswalletPreferencesUtils;
+import ro.group305.passwalletandroidclient.utils.WalletFileURI;
 
 public class CreatePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
@@ -42,7 +41,13 @@ public class CreatePassWalletActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
                         Uri selectedWalletURI = data.getData();
-                        writeFileContent(selectedWalletURI, encryptedDefaultPasswalletContent);
+                        try {
+                            new WalletFileURI(selectedWalletURI, this.getContentResolver()).saveFileContent(encryptedDefaultPasswalletContent);
+                        } catch (IOException e) {
+                            Log.e(TAG, e.getMessage(), e);
+                            ActivityUtils.displayErrorMessage(this, "Fatal Error", "Error saving passwallet file:" + e.getMessage());
+                            return;
+                        }
                         PasswalletPreferencesUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
                         startManagePassWalletActivity(selectedWalletURI);
                     } else {
@@ -62,22 +67,6 @@ public class CreatePassWalletActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-
-    private void writeFileContent(Uri selectedWalletURI, byte[] encryptedPasswallet) {
-        try {
-            ParcelFileDescriptor selectedWallet =
-                    this.getContentResolver().
-                            openFileDescriptor(selectedWalletURI, "w");
-            FileOutputStream fileOutputStream =
-                    new FileOutputStream(selectedWallet.getFileDescriptor());
-            fileOutputStream.write(encryptedPasswallet);
-            fileOutputStream.close();
-            selectedWallet.close();
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-    }
 
     private void createBrowsePasswalletButton() {
         Button selectLocalPasswalletButton = findViewById(R.id.create_passwallet_button);

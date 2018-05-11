@@ -1,6 +1,11 @@
 package ro.group305.passwalletandroidclient.utils;
 
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 

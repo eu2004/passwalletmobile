@@ -6,11 +6,12 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import ro.group305.passwallet.model.UserAccount;
+import ro.eu.passwallet.model.UserAccount;
 
 public class UserAccountDAO {
     private static final String TAG = "PassWallet";
@@ -22,7 +23,7 @@ public class UserAccountDAO {
     }
 
     public UserAccount getUserAccountById(long id) {
-        for(UserAccount userAccount : userAccounts) {
+        for (UserAccount userAccount : userAccounts) {
             if (id == userAccount.getId()) {
                 return userAccount;
             }
@@ -30,8 +31,75 @@ public class UserAccountDAO {
         return null;
     }
 
+    public byte[] createUserAccount(UserAccount userAccount) throws UnsupportedEncodingException {
+        Integer maxId = getMaxId();
+        synchronized (userAccounts) {
+            userAccount.setId(maxId);
+            userAccounts.add(userAccount);
+            return toByteArray();
+        }
+    }
+
+    public byte[] deleteUserAccount(UserAccount userAccount) throws UnsupportedEncodingException {
+        synchronized (userAccounts) {
+            if (userAccounts.remove(userAccount)) {
+                return toByteArray();
+            }
+            return null;
+        }
+    }
+
+    public byte[] updateUserAccount(UserAccount updatedUserAccount) throws UnsupportedEncodingException {
+        synchronized (userAccounts) {
+            Integer id = updatedUserAccount.getId();
+            UserAccount existingUserAccount = this.getUserAccountById(id);
+            if (existingUserAccount != null) {
+                int index = userAccounts.indexOf(existingUserAccount);
+                if (index != -1) {
+                    userAccounts.set(index, updatedUserAccount);
+                    return toByteArray();
+                }
+            }
+            return null;
+        }
+    }
+
     public List<UserAccount> getUserAccounts() {
         return Collections.unmodifiableList(userAccounts);
+    }
+
+    private byte[] toByteArray() throws UnsupportedEncodingException {
+        StringBuilder xmlContent = new StringBuilder();
+        xmlContent.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+        xmlContent.append("<USERSACCOUNTS>");
+        for (UserAccount userAccount : userAccounts) {
+            toXMLElement(xmlContent, userAccount);
+        }
+        xmlContent.append("</USERSACCOUNTS>");
+        return xmlContent.toString().getBytes("UTF-8");
+    }
+
+    private void toXMLElement(StringBuilder xmlContent, UserAccount userAccount) {
+        xmlContent.append("<userAccount>");
+        xmlContent.append("<description>");
+        xmlContent.append(userAccount.getDescription());
+        xmlContent.append("</description>");
+        xmlContent.append("<id>");
+        xmlContent.append(userAccount.getId());
+        xmlContent.append("</id>");
+        xmlContent.append("<name>");
+        xmlContent.append(userAccount.getName());
+        xmlContent.append("</name>");
+        xmlContent.append("<nickName>");
+        xmlContent.append(userAccount.getNickName());
+        xmlContent.append("</nickName>");
+        xmlContent.append("<password>");
+        xmlContent.append(userAccount.getPassword());
+        xmlContent.append("</password>");
+        xmlContent.append("<siteURL>");
+        xmlContent.append(userAccount.getSiteURL());
+        xmlContent.append("</siteURL>");
+        xmlContent.append("</userAccount>");
     }
 
     private List<UserAccount> loadUsersAccounts(byte[] decryptedWalletFile) throws XmlPullParserException, IOException {
@@ -87,5 +155,17 @@ public class UserAccountDAO {
             event = myParser.next();
         }
         return userAccounts;
+    }
+
+    public Integer getMaxId() {
+        synchronized (userAccounts) {
+            Integer max = Integer.MIN_VALUE;
+            for (UserAccount account : userAccounts) {
+                if (account.getId() > max) {
+                    max = account.getId();
+                }
+            }
+            return max + 1;
+        }
     }
 }

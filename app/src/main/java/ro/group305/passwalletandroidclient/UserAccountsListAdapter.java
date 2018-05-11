@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ro.group305.passwallet.model.UserAccount;
+import ro.eu.passwallet.model.UserAccount;
 
 public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
@@ -55,6 +55,12 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         accounts = getAdapterData(userAccountList);
         fieldId = textViewResourceId;
         this.attributesToDisplay = attributeToDisplay;
+    }
+
+    public void updateUserAccountsList(@NonNull List<UserAccount> userAccountList) {
+        accounts = getAdapterData(userAccountList);
+        originalValues = null;
+        this.notifyDataSetChanged();
     }
 
     /**
