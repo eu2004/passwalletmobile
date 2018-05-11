@@ -1,4 +1,4 @@
-package ro.group305.passwalletandroidclient;
+package ro.group305.passwalletandroidclient.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

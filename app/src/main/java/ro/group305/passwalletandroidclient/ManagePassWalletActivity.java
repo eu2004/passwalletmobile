@@ -16,6 +16,7 @@ import java.util.Map;
 
 import ro.group305.passwallet.model.UserAccount;
 import ro.group305.passwallet.service.crypt.CryptographyService;
+import ro.group305.passwalletandroidclient.utils.WalletFileURI;
 
 /**
  * Created by emilu on 2/25/2018.

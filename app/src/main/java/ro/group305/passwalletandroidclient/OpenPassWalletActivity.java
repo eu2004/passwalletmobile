@@ -1,9 +1,7 @@
 package ro.group305.passwalletandroidclient;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import ro.group305.passwalletandroidclient.utils.PasswalletPreferencesUtils;
+import ro.group305.passwalletandroidclient.utils.WalletFileURI;
 
 public class OpenPassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
@@ -47,7 +48,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
     private void initSelectedWalletURI() {
         TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
-        String lastWalletURI = getPreferences(Context.MODE_PRIVATE).getString("selectedWalletURI", "");
+        String lastWalletURI = PasswalletPreferencesUtils.loadLastSelectedFile(this);
         selectedWalletName.setText(lastWalletURI);
         if (lastWalletURI.length() > 0) {
             selectedWalletURI = Uri.parse(lastWalletURI);
@@ -96,10 +97,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                     if (data != null) {
                         selectedWalletURI = data.getData();
                         Log.i(TAG, "Uri: " + selectedWalletURI.toString());
-                        SharedPreferences preferences = this.getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("selectedWalletURI", selectedWalletURI.toString());
-                        editor.commit();
+                        PasswalletPreferencesUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
                         TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
                         selectedWalletName.setText(selectedWalletURI.toString());
                     } else {

@@ -1,12 +1,13 @@
-package ro.group305.passwalletandroidclient;
+package ro.group305.passwalletandroidclient.utils;
 
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import ro.group305.passwalletandroidclient.utils.FileUtils;
 
 public class WalletFileURI {
     private static final String TAG = "PassWallet";
