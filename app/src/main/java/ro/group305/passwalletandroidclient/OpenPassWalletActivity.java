@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import ro.eu.passwallet.service.crypt.CryptographyService;
+import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 import ro.group305.passwalletandroidclient.utils.PasswalletPreferencesUtils;
 import ro.group305.passwalletandroidclient.utils.WalletFileURI;
 
@@ -64,12 +66,22 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                     Log.e(TAG, "No wallet file is selected or file path is incorrect!");
                     return;
                 }
+                try {
+                    //validate first the password
+                    EditText password = findViewById(R.id.walletKey);
+                    CryptographyService cryptographyService = new CryptographyService(password.getText().toString());
+                    WalletFileURI walletFileURI = new WalletFileURI(selectedWalletURI, getContentResolver());
+                    cryptographyService.decrypt(walletFileURI.getContent());
 
-                Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
-                intent.putExtra("encryptedWalletFileURI", selectedWalletURI.toString());
-                EditText password = findViewById(R.id.walletKey);
-                intent.putExtra("key", password.getText().toString().getBytes());
-                startActivity(intent);
+                    //continue with the search list
+                    Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
+                    intent.putExtra("encryptedWalletFileURI", selectedWalletURI.toString());
+                    intent.putExtra("key", password.getText().toString().getBytes());
+                    startActivity(intent);
+                } catch (Exception exception) {
+                    ActivityUtils.displayErrorMessage(OpenPassWalletActivity.this, "Error loading wallet", exception.getMessage());
+                }
+
             }
         });
     }
