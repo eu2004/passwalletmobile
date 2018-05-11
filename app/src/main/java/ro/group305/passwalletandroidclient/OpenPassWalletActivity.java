@@ -19,8 +19,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenPassWallet extends AppCompatActivity {
-    private static final String TAG = "OpenPassWallet";
+public class OpenPassWalletActivity extends AppCompatActivity {
+    private static final String TAG = "PassWallet";
 
     private static final int READ_REQUEST_CODE = 42;
     private Uri selectedWalletURI;
@@ -34,7 +34,7 @@ public class OpenPassWallet extends AppCompatActivity {
         selectLocalPasswalletButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    loadEncryptedWallet();
+                    browseForEncryptedWalletFile();
                 } catch (Exception exception) {
                     Log.e(TAG, exception.getMessage(), exception);
                 }
@@ -87,7 +87,7 @@ public class OpenPassWallet extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void loadEncryptedWallet() {
+    private void browseForEncryptedWalletFile() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/xml");
@@ -97,19 +97,19 @@ public class OpenPassWallet extends AppCompatActivity {
     private void loadEncryptedWalletFile(InputStream is) {
         byte[] encryptedWalletFile = null;
         try {
-            encryptedWalletFile = loadEncryptedWalletContent(is);
+            encryptedWalletFile = loadEncryptedWalletFileContent(is);
         } catch (IOException exception) {
             Log.e(TAG, exception.getMessage(), exception);
         }
 
-        Intent intent = new Intent(OpenPassWallet.this, ManagePassWallet.class);
+        Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
         intent.putExtra("encryptedWalletFile", encryptedWalletFile);
         EditText password = findViewById(R.id.walletKey);
         intent.putExtra("key", password.getText().toString().getBytes());
         startActivity(intent);
     }
 
-    private byte[] loadEncryptedWalletContent(InputStream in) throws IOException {
+    private byte[] loadEncryptedWalletFileContent(InputStream in) throws IOException {
         List<Byte> xmlFileContent = new ArrayList<>();
         byte[] buffer = new byte[256];
         int count = -1;

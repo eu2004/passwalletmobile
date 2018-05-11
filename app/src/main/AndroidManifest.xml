@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
 
 
-        <activity android:name=".OpenPassWallet">
+        <activity android:name=".OpenPassWalletActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -19,7 +19,7 @@
         </activity>
 
         <activity
-            android:name=".ManagePassWallet">
+            android:name=".ManagePassWalletActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

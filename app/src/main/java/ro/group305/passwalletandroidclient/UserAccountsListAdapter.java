@@ -16,10 +16,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserAccountsAdapter extends BaseAdapter implements Filterable {
+import ro.group305.passwallet.model.UserAccount;
+
+public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
     private final LayoutInflater mInflater;
 
@@ -41,10 +44,10 @@ public class UserAccountsAdapter extends BaseAdapter implements Filterable {
      * Contains the list of objects that represent the data of this ArrayAdapter.
      * The content of this list is referred to as "the array" in the documentation.
      */
-    private List<Map<String, String>> mObjects;
+    private List<Map<String, String>> mAccounts;
 
     /**
-     * Indicates whether the contents of {@link #mObjects} came from static resources.
+     * Indicates whether the contents of {@link #mAccounts} came from static resources.
      */
     private boolean mObjectsFromResources;
 
@@ -57,23 +60,23 @@ public class UserAccountsAdapter extends BaseAdapter implements Filterable {
 
     /**
      * Indicates whether or not {@link #notifyDataSetChanged()} must be called whenever
-     * {@link #mObjects} is modified.
+     * {@link #mAccounts} is modified.
      */
     private boolean mNotifyOnChange = true;
 
-    // A copy of the original mObjects array, initialized from and then used instead as soon as
-    // the mFilter ArrayFilter is used. mObjects will then only contain the filtered values.
+    // A copy of the original mAccounts array, initialized from and then used instead as soon as
+    // the mFilter ArrayFilter is used. mAccounts will then only contain the filtered values.
     private ArrayList<Map<String, ?>> mOriginalValues;
     private ArrayFilter mFilter;
     private String[] attributeToDisplay;
 
-    public UserAccountsAdapter(@NonNull Context context, @LayoutRes int resource,
-                               @IdRes int textViewResourceId, @NonNull List<Map<String, String>> objects,
-                               @NonNull String[] attributeToDisplay) {
+    public UserAccountsListAdapter(@NonNull Context context, @LayoutRes int resource,
+                                   @IdRes int textViewResourceId, @NonNull List<UserAccount> userAccountList,
+                                   @NonNull String[] attributeToDisplay) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
         mResource = mDropDownResource = resource;
-        mObjects = objects;
+        mAccounts = getAdapterData(userAccountList);
         mFieldId = textViewResourceId;
         this.attributeToDisplay = attributeToDisplay;
     }
@@ -85,7 +88,7 @@ public class UserAccountsAdapter extends BaseAdapter implements Filterable {
         if (mOriginalValues != null) {
             mOriginalValues.clear();
         } else {
-            mObjects.clear();
+            mAccounts.clear();
         }
         mObjectsFromResources = false;
         if (mNotifyOnChange) notifyDataSetChanged();
@@ -99,13 +102,13 @@ public class UserAccountsAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public int getCount() {
-        return mObjects.size();
+        return mAccounts.size();
     }
 
     @Override
     public @Nullable
     Map<String, ?> getItem(int position) {
-        return mObjects.get(position);
+        return mAccounts.get(position);
     }
 
     @Override
@@ -186,13 +189,32 @@ public class UserAccountsAdapter extends BaseAdapter implements Filterable {
         }
 
         // Otherwise, only return options that came from static resources.
-        if (!mObjectsFromResources || mObjects == null || mObjects.isEmpty()) {
+        if (!mObjectsFromResources || mAccounts == null || mAccounts.isEmpty()) {
             return null;
         }
-        final int size = mObjects.size();
+        final int size = mAccounts.size();
         final CharSequence[] options = new CharSequence[size];
-        mObjects.toArray(options);
+        mAccounts.toArray(options);
         return options;
+    }
+
+    private List<Map<String,String>> getAdapterData(List<UserAccount> accounts) {
+        List<Map<String,String>> data = new ArrayList<>();
+        for (UserAccount userAccount : accounts) {
+            data.add(transformUserAccountToMap(userAccount));
+        }
+        return data;
+    }
+
+    private Map<String,String> transformUserAccountToMap(UserAccount userAccount) {
+        Map<String, String> data = new HashMap<>();
+        data.put("id", userAccount.getId().toString().toLowerCase());
+        data.put("description", userAccount.getDescription() == null ? "" : userAccount.getDescription().toLowerCase());
+        data.put("name", userAccount.getName() == null ? "" : userAccount.getName().toLowerCase());
+        data.put("nickName", userAccount.getNickName() == null ? "" : userAccount.getNickName().toLowerCase());
+        data.put("pass", userAccount.getPassword() == null ? "" : userAccount.getPassword().toLowerCase());
+        data.put("siteURL", userAccount.getSiteURL() == null ? "" : userAccount.getSiteURL().toLowerCase());
+        return data;
     }
 
     /**
@@ -206,7 +228,7 @@ public class UserAccountsAdapter extends BaseAdapter implements Filterable {
             final FilterResults results = new FilterResults();
 
             if (mOriginalValues == null) {
-                mOriginalValues = new ArrayList<Map<String, ?>>(mObjects);
+                mOriginalValues = new ArrayList<Map<String, ?>>(mAccounts);
             }
 
             if (prefix == null || prefix.length() == 0) {
@@ -259,9 +281,9 @@ public class UserAccountsAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             //noinspection unchecked
-            mObjects = (List<Map<String, String>>) results.values;
-            if (mObjects == null) {
-                mObjects = Collections.emptyList();
+            mAccounts = (List<Map<String, String>>) results.values;
+            if (mAccounts == null) {
+                mAccounts = Collections.emptyList();
             }
             if (results.count > 0) {
                 notifyDataSetChanged();
