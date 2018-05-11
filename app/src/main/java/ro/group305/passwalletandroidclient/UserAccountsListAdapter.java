@@ -24,91 +24,67 @@ import ro.group305.passwallet.model.UserAccount;
 
 public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
-    private final LayoutInflater mInflater;
+    private final LayoutInflater inflater;
 
-    private final Context mContext;
+    private final Context context;
 
-    /**
-     * The resource indicating what views to inflate to display the content of this
-     * array adapter.
-     */
-    private final int mResource;
+    private final int resource;
 
-    /**
-     * The resource indicating what views to inflate to display the content of this
-     * array adapter in a drop down widget.
-     */
-    private int mDropDownResource;
+    private int dropDownResource;
 
-    /**
-     * Contains the list of objects that represent the data of this ArrayAdapter.
-     * The content of this list is referred to as "the array" in the documentation.
-     */
-    private List<Map<String, String>> mAccounts;
+    private List<Map<String, String>> accounts;
 
-    /**
-     * Indicates whether the contents of {@link #mAccounts} came from static resources.
-     */
-    private boolean mObjectsFromResources;
+    private boolean objectsFromResources;
 
-    /**
-     * If the inflated resource is not a TextView, {@code mFieldId} is used to find
-     * a TextView inside the inflated views hierarchy. This field must contain the
-     * identifier that matches the one defined in the resource file.
-     */
-    private int mFieldId = 0;
+    private int fieldId = 0;
 
-    /**
-     * Indicates whether or not {@link #notifyDataSetChanged()} must be called whenever
-     * {@link #mAccounts} is modified.
-     */
-    private boolean mNotifyOnChange = true;
+    private boolean notifyOnChange = true;
 
-    // A copy of the original mAccounts array, initialized from and then used instead as soon as
-    // the mFilter ArrayFilter is used. mAccounts will then only contain the filtered values.
-    private ArrayList<Map<String, ?>> mOriginalValues;
-    private ArrayFilter mFilter;
-    private String[] attributeToDisplay;
+    // A copy of the original accounts array, initialized from and then used instead as soon as
+    // the filter ArrayFilter is used. accounts will then only contain the filtered values.
+    private ArrayList<Map<String, ?>> originalValues;
+    private ArrayFilter filter;
+    private String[] attributesToDisplay;
 
     public UserAccountsListAdapter(@NonNull Context context, @LayoutRes int resource,
                                    @IdRes int textViewResourceId, @NonNull List<UserAccount> userAccountList,
                                    @NonNull String[] attributeToDisplay) {
-        mContext = context;
-        mInflater = LayoutInflater.from(context);
-        mResource = mDropDownResource = resource;
-        mAccounts = getAdapterData(userAccountList);
-        mFieldId = textViewResourceId;
-        this.attributeToDisplay = attributeToDisplay;
+        this.context = context;
+        inflater = LayoutInflater.from(context);
+        this.resource = dropDownResource = resource;
+        accounts = getAdapterData(userAccountList);
+        fieldId = textViewResourceId;
+        this.attributesToDisplay = attributeToDisplay;
     }
 
     /**
      * Remove all elements from the list.
      */
     public void clear() {
-        if (mOriginalValues != null) {
-            mOriginalValues.clear();
+        if (originalValues != null) {
+            originalValues.clear();
         } else {
-            mAccounts.clear();
+            accounts.clear();
         }
-        mObjectsFromResources = false;
-        if (mNotifyOnChange) notifyDataSetChanged();
+        objectsFromResources = false;
+        if (notifyOnChange) notifyDataSetChanged();
     }
 
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        mNotifyOnChange = true;
+        notifyOnChange = true;
     }
 
     @Override
     public int getCount() {
-        return mAccounts.size();
+        return accounts.size();
     }
 
     @Override
     public @Nullable
     Map<String, ?> getItem(int position) {
-        return mAccounts.get(position);
+        return accounts.get(position);
     }
 
     @Override
@@ -120,7 +96,7 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
     public @NonNull
     View getView(int position, @Nullable View convertView,
                  @NonNull ViewGroup parent) {
-        return createViewFromResource(mInflater, position, convertView, parent, mResource);
+        return createViewFromResource(inflater, position, convertView, parent, resource);
     }
 
     private @NonNull
@@ -136,16 +112,16 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         }
 
         try {
-            if (mFieldId == 0) {
+            if (fieldId == 0) {
                 //  If no custom field is assigned, assume the whole resource is a TextView
                 text = (TextView) view;
             } else {
                 //  Otherwise, find the TextView field within the layout
-                text = view.findViewById(mFieldId);
+                text = view.findViewById(fieldId);
 
                 if (text == null) {
                     throw new RuntimeException("Failed to find view with ID "
-                            + mContext.getResources().getResourceName(mFieldId)
+                            + context.getResources().getResourceName(fieldId)
                             + " in item layout");
                 }
             }
@@ -157,7 +133,7 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
         final Map<String, ?> item = getItem(position);
         StringBuilder itemText = new StringBuilder();
-        for (String attribute : attributeToDisplay) {
+        for (String attribute : attributesToDisplay) {
             itemText.append(item.get(attribute)).append(" ");
         }
         text.setText(itemText);
@@ -168,16 +144,16 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
     @Override
     public View getDropDownView(int position, @Nullable View convertView,
                                 @NonNull ViewGroup parent) {
-        return createViewFromResource(mInflater, position, convertView, parent, mDropDownResource);
+        return createViewFromResource(inflater, position, convertView, parent, dropDownResource);
     }
 
     @Override
     public @NonNull
     Filter getFilter() {
-        if (mFilter == null) {
-            mFilter = new ArrayFilter();
+        if (filter == null) {
+            filter = new ArrayFilter();
         }
-        return mFilter;
+        return filter;
     }
 
     @Override
@@ -189,12 +165,12 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         }
 
         // Otherwise, only return options that came from static resources.
-        if (!mObjectsFromResources || mAccounts == null || mAccounts.isEmpty()) {
+        if (!objectsFromResources || accounts == null || accounts.isEmpty()) {
             return null;
         }
-        final int size = mAccounts.size();
+        final int size = accounts.size();
         final CharSequence[] options = new CharSequence[size];
-        mAccounts.toArray(options);
+        accounts.toArray(options);
         return options;
     }
 
@@ -227,20 +203,20 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence prefix) {
             final FilterResults results = new FilterResults();
 
-            if (mOriginalValues == null) {
-                mOriginalValues = new ArrayList<Map<String, ?>>(mAccounts);
+            if (originalValues == null) {
+                originalValues = new ArrayList<Map<String, ?>>(accounts);
             }
 
             if (prefix == null || prefix.length() == 0) {
                 final ArrayList<Map<String, ?>> list;
-                list = new ArrayList<Map<String, ?>>(mOriginalValues);
+                list = new ArrayList<Map<String, ?>>(originalValues);
                 results.values = list;
                 results.count = list.size();
             } else {
                 final String prefixString = prefix.toString().toLowerCase();
 
                 final ArrayList<Map<String, ?>> values;
-                values = new ArrayList<Map<String, ?>>(mOriginalValues);
+                values = new ArrayList<Map<String, ?>>(originalValues);
 
                 final int count = values.size();
                 final ArrayList<Map<String, ?>> newValues = new ArrayList<>();
@@ -281,9 +257,9 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             //noinspection unchecked
-            mAccounts = (List<Map<String, String>>) results.values;
-            if (mAccounts == null) {
-                mAccounts = Collections.emptyList();
+            accounts = (List<Map<String, String>>) results.values;
+            if (accounts == null) {
+                accounts = Collections.emptyList();
             }
             if (results.count > 0) {
                 notifyDataSetChanged();
