@@ -23,23 +23,12 @@ public class WalletFileURI {
     public synchronized byte[] getContent() {
         if (walletFileContent == null) {
             try (InputStream inputStream = contentResolver.openInputStream(walletFileURI)) {
-                walletFileContent = loadEncryptedWalletFileContent(inputStream);
+                walletFileContent = FileUtils.loadFileContentFromStream(inputStream);
             } catch (IOException exception) {
                 Log.e(TAG, exception.getMessage(), exception);
             }
         }
         return walletFileContent;
-    }
-
-    private byte[] loadEncryptedWalletFileContent(InputStream in) throws IOException {
-        ByteArrayOutputStream xmlFileContent = new ByteArrayOutputStream();
-        byte[] buffer = new byte[256];
-        int count;
-        while ((count = in.read(buffer)) != -1) {
-            xmlFileContent.write(buffer, 0, count);
-        }
-        xmlFileContent.close();
-        return xmlFileContent.toByteArray();
     }
 
     public static boolean isValid(Uri selectedWalletURI) {

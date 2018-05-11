@@ -28,7 +28,21 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
         createOpenSelectedPasswalletButton();
 
+        createCreateNewPasswalletLink();
+
         initSelectedWalletURI();
+    }
+
+    private void createCreateNewPasswalletLink() {
+        TextView createNewPasswalletTextView = findViewById(R.id.create_new_passwallet_textview);
+        createNewPasswalletTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "Create new passwallet");
+                Intent intent = new Intent(OpenPassWalletActivity.this, CreatePassWalletActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initSelectedWalletURI() {
