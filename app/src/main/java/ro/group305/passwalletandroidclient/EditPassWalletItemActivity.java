@@ -41,8 +41,6 @@ public class EditPassWalletItemActivity extends AppCompatActivity {
         });
     }
 
-
-
     private UserAccount buildUserAccount() {
         EditText nickNameEditText = findViewById(R.id.nick_name_EditText);
         EditText nameEditText = findViewById(R.id.name_EditText);

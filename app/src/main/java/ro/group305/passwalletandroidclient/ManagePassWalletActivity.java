@@ -15,6 +15,7 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.io.Serializable;
@@ -52,7 +53,8 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             cryptographyService = new CryptographyService(key);
             walletFileURI = new WalletFileURI(Uri.parse(encryptedWalletFileURIStr), getContentResolver());
             userAccountDAO = new UserAccountDAO(cryptographyService.decrypt(walletFileURI.getContent()));
-            createSearchView(userAccountDAO);
+            createSearchView();
+            createAddButton();
         } catch (Exception exception) {
             Log.e(TAG, exception.getMessage(), exception);
             ActivityUtils.displayErrorMessage(this, "Error loading wallet", exception.getMessage());
@@ -186,7 +188,18 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         clipboard.setPrimaryClip(clip);
     }
 
-    private void createSearchView(UserAccountDAO userAccountDAO) {
+    private void createAddButton() {
+        Button addButton = findViewById(R.id.create_passwallet_item_button);
+        addButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ManagePassWalletActivity.this.addUserAccount();
+            }
+        });
+    }
+
+    private void createSearchView() {
         userAccountsAdapter = new UserAccountsListAdapter(this.getApplicationContext(),
                 R.layout.accounts_list_items, R.id.list_item, userAccountDAO.getUserAccounts(), new String[]{"nickName"});
         SearchView search = findViewById(R.id.search);
