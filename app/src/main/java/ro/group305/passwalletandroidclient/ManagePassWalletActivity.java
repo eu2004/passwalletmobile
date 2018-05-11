@@ -11,11 +11,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.Map;
 
 import ro.group305.passwallet.model.UserAccount;
 import ro.group305.passwallet.service.crypt.CryptographyService;
+import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 import ro.group305.passwalletandroidclient.utils.WalletFileURI;
 
 /**
@@ -38,6 +40,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             createSearchView(new UserAccountDAO(decrypt(encryptedWalletFile, key)));
         } catch (Exception exception) {
             Log.e(TAG, exception.getMessage(), exception);
+            ActivityUtils.displayErrorMessage(this, "Error loading wallet", exception.getMessage());
         }
     }
 

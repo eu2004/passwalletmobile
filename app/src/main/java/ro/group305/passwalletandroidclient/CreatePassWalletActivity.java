@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ro.group305.passwallet.service.crypt.CryptographyService;
+import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 import ro.group305.passwalletandroidclient.utils.FileUtils;
 import ro.group305.passwalletandroidclient.utils.PasswalletPreferencesUtils;
 
@@ -85,6 +86,7 @@ public class CreatePassWalletActivity extends AppCompatActivity {
                 try {
                     if (!validatePasswalletKey()) {
                         Log.e(TAG, "Passwallet key is empty!");
+                        ActivityUtils.displayErrorMessage(CreatePassWalletActivity.this, "Error creating wallet", "Key is empty!");
                         return;
                     }
                     byte[] defaultPasswallet = loadDefaultPasswalletFromTemplate();
