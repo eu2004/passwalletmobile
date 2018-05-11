@@ -81,7 +81,6 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             menu.add("Copy");
             menu.add("Edit");
             menu.add("Delete");
-            menu.add("Add New");
         }
         super.onCreateContextMenu(menu, v, menuInfo);
     }

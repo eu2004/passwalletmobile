@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".ManagePassWalletActivity">
 
-    <LinearLayout
-        android:layout_width="600dp"
-        android:layout_height="600dp"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <android.support.v7.widget.SearchView
@@ -19,17 +19,17 @@
         <ListView
             android:id="@+id/list_view"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:layout_height="400dp"
             android:layout_below="@+id/search" />
+
         <Button
             android:id="@+id/create_passwallet_item_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp" android:text="Add"/>
-
-    </LinearLayout>
+            android:layout_below="@+id/list_view"
+            android:layout_marginTop="20dp"
+            android:text="Add" />
+    </RelativeLayout>
 
 
 </android.support.constraint.ConstraintLayout>

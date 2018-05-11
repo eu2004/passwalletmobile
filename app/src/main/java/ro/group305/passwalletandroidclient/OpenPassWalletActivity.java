@@ -20,6 +20,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
 
     private static final int READ_REQUEST_CODE = 42;
+    private static final int CREATE_PASSWALLET_ACTION_REQUEST_CODE = 43;
     private Uri selectedWalletURI;
 
     @Override
@@ -43,7 +44,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.i(TAG, "Create new passwallet");
                 Intent intent = new Intent(OpenPassWalletActivity.this, CreatePassWalletActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, CREATE_PASSWALLET_ACTION_REQUEST_CODE);
             }
         });
     }
@@ -116,6 +117,15 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                         Log.e(TAG, "Data is null, resultCode " + resultCode);
                     }
                 }
+                break;
+            case CREATE_PASSWALLET_ACTION_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data != null) {
+                        TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
+                        selectedWalletName.setText(data.getStringExtra("selectedWalletURI"));
+                    }
+                }
+
                 break;
         }
     }

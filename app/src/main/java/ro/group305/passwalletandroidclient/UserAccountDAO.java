@@ -120,7 +120,7 @@ public class UserAccountDAO {
                             break;
                         case "description":
                             myParser.next();
-                            userAccount.setDescription(myParser.getText());
+                            userAccount.setDescription(getStringValue(myParser.getText()));
                             break;
                         case "id":
                             myParser.next();
@@ -128,19 +128,19 @@ public class UserAccountDAO {
                             break;
                         case "name":
                             myParser.next();
-                            userAccount.setName(myParser.getText());
+                            userAccount.setName(getStringValue(myParser.getText()));
                             break;
                         case "nickName":
                             myParser.next();
-                            userAccount.setNickName(myParser.getText());
+                            userAccount.setNickName(getStringValue(myParser.getText()));
                             break;
                         case "password":
                             myParser.next();
-                            userAccount.setPassword(myParser.getText());
+                            userAccount.setPassword(getStringValue(myParser.getText()));
                             break;
                         case "siteURL":
                             myParser.next();
-                            userAccount.setSiteURL(myParser.getText());
+                            userAccount.setSiteURL(getStringValue(myParser.getText()));
                             break;
                     }
                     break;
@@ -155,6 +155,13 @@ public class UserAccountDAO {
             event = myParser.next();
         }
         return userAccounts;
+    }
+
+    private String getStringValue(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text;
     }
 
     public Integer getMaxId() {
