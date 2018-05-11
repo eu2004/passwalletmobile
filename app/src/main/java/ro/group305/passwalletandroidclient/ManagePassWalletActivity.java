@@ -32,7 +32,6 @@ import ro.group305.passwalletandroidclient.utils.WalletFileURI;
 public class ManagePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
     private static final int EDIT_ITEM_ACTION_RESULT = 0;
-    private static final int DELETE_ITEM_ACTION_RESULT = 1;
     private static final int ADD_ITEM_ACTION_RESULT = 1;
 
     private UserAccountDAO userAccountDAO;
@@ -65,10 +64,10 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case ADD_ITEM_ACTION_RESULT:
-                onAddItemActionResult(requestCode, resultCode, data);
+                onAddItemActionResult(resultCode, data);
                 break;
             case EDIT_ITEM_ACTION_RESULT:
-
+                onEditItemActionResult(resultCode, data);
                 break;
         }
     }
@@ -108,6 +107,22 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
+    private void onEditItemActionResult(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            UserAccount updatedUserAccount = (UserAccount) data.getSerializableExtra("updatedUserAccount");
+            try {
+                byte[] newContent = userAccountDAO.updateUserAccount(updatedUserAccount);
+                if (newContent != null) {
+                    walletFileURI.saveFileContent(cryptographyService.encrypt(newContent));
+                    userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
+                }
+            } catch (Exception exception) {
+                Log.e(TAG, exception.getMessage(), exception);
+                ActivityUtils.displayErrorMessage(this, "Error updating passwallet item", exception.getMessage());
+            }
+        }
+    }
+
     private void deleteUserAccount(UserAccount userAccount) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -138,7 +153,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                 .setNegativeButton("No", dialogClickListener).show();
     }
 
-    private void onAddItemActionResult(int requestCode, int resultCode, Intent data) {
+    private void onAddItemActionResult(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             UserAccount newUserAccount = (UserAccount) data.getSerializableExtra("newUserAccount");
             try {
@@ -163,6 +178,12 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EditPassWalletItemActivity.class);
         intent.putExtra("selectedUserAccount", (Serializable) userAccount);
         startActivityForResult(intent, EDIT_ITEM_ACTION_RESULT);
+    }
+
+    private void copyInfoToClipboard(UserAccount userAccount) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("user", userAccount.toString());
+        clipboard.setPrimaryClip(clip);
     }
 
     private void createSearchView(UserAccountDAO userAccountDAO) {
@@ -190,11 +211,5 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         this.registerForContextMenu(listView);
         listView.setAdapter(userAccountsAdapter);
         listView.setLongClickable(true);
-    }
-
-    private void copyInfoToClipboard(UserAccount userAccount) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("user", userAccount.toString());
-        clipboard.setPrimaryClip(clip);
     }
 }

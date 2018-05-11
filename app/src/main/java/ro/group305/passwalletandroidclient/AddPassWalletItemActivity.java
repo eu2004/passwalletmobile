@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ro.eu.passwallet.model.UserAccount;
+import ro.group305.passwalletandroidclient.utils.UserAccountUIValidator;
 
 public class AddPassWalletItemActivity extends AppCompatActivity {
 
@@ -26,7 +27,8 @@ public class AddPassWalletItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 UserAccount userAccount = buildUserAccount();
-                if (!isValid(userAccount)) {
+                UserAccountUIValidator validator = new UserAccountUIValidator(AddPassWalletItemActivity.this);
+                if (!validator.isValid(userAccount)) {
                     return;
                 }
 
@@ -36,22 +38,6 @@ public class AddPassWalletItemActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    private boolean isValid(UserAccount userAccount) {
-        if (!isValueValid(userAccount.getNickName())) {
-            EditText nickNameEditText = findViewById(R.id.nick_name_EditText);
-            nickNameEditText.setError("Cannot be empty");
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean isValueValid(String value) {
-        if (value == null || value.trim().length() == 0)
-            return false;
-        return true;
     }
 
     private UserAccount buildUserAccount() {
