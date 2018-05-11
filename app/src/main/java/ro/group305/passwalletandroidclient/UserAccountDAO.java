@@ -37,8 +37,6 @@ public class UserAccountDAO {
     }
 
     private List<UserAccount> loadUsersAccounts(byte[] decryptedWalletFile) throws XmlPullParserException, IOException {
-        Log.i(TAG, new String(decryptedWalletFile));
-
         XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
         XmlPullParser myParser = xmlFactoryObject.newPullParser();
         myParser.setInput(new ByteArrayInputStream(decryptedWalletFile), null);
