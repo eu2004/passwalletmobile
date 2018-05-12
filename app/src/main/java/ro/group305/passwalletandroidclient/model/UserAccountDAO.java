@@ -96,7 +96,7 @@ public class UserAccountDAO {
         return Collections.unmodifiableList(sortedUserAccounts);
     }
 
-    public Integer getMaxId() {
+    private Integer getMaxId() {
         synchronized (UserAccountDAO.class) {
             Integer max = Integer.MIN_VALUE;
             for (UserAccount account : userAccounts) {

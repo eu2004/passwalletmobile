@@ -1,7 +1,6 @@
 package ro.group305.passwalletandroidclient.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 import android.widget.EditText;
 

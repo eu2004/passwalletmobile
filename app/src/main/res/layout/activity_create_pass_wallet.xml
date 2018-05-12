@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="50dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="10dp"
             android:text="Create PassWallet" />
 
@@ -24,7 +24,7 @@
             android:id="@+id/textView"
             android:layout_width="111dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="20dp"
             android:text="Enter Password:"
             app:layout_constraintEnd_toStartOf="@+id/walletKey" />
@@ -33,7 +33,7 @@
             android:id="@+id/walletKey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:ems="12"
             android:inputType="textPassword" />
 
@@ -41,7 +41,7 @@
             android:id="@+id/create_passwallet_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="20dp"
             android:text="Create" />
     </LinearLayout>

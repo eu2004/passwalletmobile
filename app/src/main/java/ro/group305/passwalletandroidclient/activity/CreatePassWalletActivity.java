@@ -95,7 +95,7 @@ public class CreatePassWalletActivity extends AppCompatActivity {
 
     private boolean validatePasswalletKey() {
         EditText password = findViewById(R.id.walletKey);
-        return password.getText().toString() != null && password.getText().toString().length() != 0;
+        return password.getText().toString().length() != 0;
     }
 
     private byte[] loadDefaultPasswalletFromTemplate() throws IOException {

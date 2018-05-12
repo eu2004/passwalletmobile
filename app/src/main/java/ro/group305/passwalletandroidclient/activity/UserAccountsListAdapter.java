@@ -215,19 +215,19 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
             final FilterResults results = new FilterResults();
 
             if (originalValues == null) {
-                originalValues = new ArrayList<Map<String, ?>>(accounts);
+                originalValues = new ArrayList<>(accounts);
             }
 
             if (prefix == null || prefix.length() == 0) {
                 final ArrayList<Map<String, ?>> list;
-                list = new ArrayList<Map<String, ?>>(originalValues);
+                list = new ArrayList<>(originalValues);
                 results.values = list;
                 results.count = list.size();
             } else {
                 final String prefixString = prefix.toString().toLowerCase();
 
                 final ArrayList<Map<String, ?>> values;
-                values = new ArrayList<Map<String, ?>>(originalValues);
+                values = new ArrayList<>(originalValues);
 
                 final int count = values.size();
                 final ArrayList<Map<String, ?>> newValues = new ArrayList<>();

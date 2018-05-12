@@ -68,6 +68,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
             returnCursor.moveToFirst();
             String name = returnCursor.getString(nameIndex);
             selectedPassWalletName.setText(name + " [" + selectedPassWalletURI.getPath() + "]");
+            returnCursor.close();
         }else {
             selectedPassWalletName.setText(" [" + selectedPassWalletURI.getPath() + "]");
         }
