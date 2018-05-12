@@ -2,8 +2,10 @@ package ro.group305.passwalletandroidclient.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -20,14 +22,14 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
 
     private static final int READ_REQUEST_CODE = 42;
-    private Uri selectedWalletURI;
-    private TextView selectedWalletName;
+    private Uri selectedPassWalletURI;
+    private TextView selectedPassWalletName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_pass_wallet);
-        selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
+        selectedPassWalletName = findViewById(R.id.selected_wallet_name_textView);
 
         createBrowsePasswalletButton();
 
@@ -53,8 +55,21 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     private void initSelectedWalletURI() {
         String lastWalletURI = ActivityUtils.loadLastSelectedFile(this);
         if (lastWalletURI != null && lastWalletURI.trim().length() > 0) {
-            selectedWalletURI = Uri.parse(lastWalletURI.trim());
-            selectedWalletName.setText(selectedWalletURI.getPath());
+            selectedPassWalletURI = Uri.parse(lastWalletURI.trim());
+            setSelectedPassWalletNameLabel();
+        }
+    }
+
+    private void setSelectedPassWalletNameLabel() {
+        Cursor returnCursor =
+                getContentResolver().query(selectedPassWalletURI, null, null, null, null);
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        if (nameIndex > -1) {
+            returnCursor.moveToFirst();
+            String name = returnCursor.getString(nameIndex);
+            selectedPassWalletName.setText(name + " [" + selectedPassWalletURI.getPath() + "]");
+        }else {
+            selectedPassWalletName.setText(" [" + selectedPassWalletURI.getPath() + "]");
         }
     }
 
@@ -64,7 +79,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //validate selected URI
-                if (!UriUtils.isUriValid(selectedWalletURI)) {
+                if (!UriUtils.isUriValid(selectedPassWalletURI)) {
                     Log.e(TAG, "No passwallet file is selected or file path is incorrect!");
                     ActivityUtils.displayErrorMessage(OpenPassWalletActivity.this, "Error opening passwallet", "No \"passwallet\" file is selected or file path is incorrect!");
                     return;
@@ -79,7 +94,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
                 try {
                     //validate decryption
-                    new CryptographyService(password.getText().toString()).decrypt(UriUtils.getUriContent(selectedWalletURI, getContentResolver()));
+                    new CryptographyService(password.getText().toString()).decrypt(UriUtils.getUriContent(selectedPassWalletURI, getContentResolver()));
                 } catch (Exception exception) {
                     ActivityUtils.displayErrorMessage(OpenPassWalletActivity.this, "Error opening passwallet", exception.getMessage());
                     return;
@@ -87,7 +102,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
                 //go to search list
                 Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
-                intent.putExtra("encryptedWalletFileURI", selectedWalletURI.toString());
+                intent.putExtra("encryptedWalletFileURI", selectedPassWalletURI.toString());
                 intent.putExtra("key", password.getText().toString().getBytes());
                 startActivity(intent);
             }
@@ -115,10 +130,10 @@ public class OpenPassWalletActivity extends AppCompatActivity {
             case READ_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
-                        selectedWalletURI = data.getData();
-                        Log.i(TAG, "Uri: " + selectedWalletURI.toString());
-                        ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
-                        selectedWalletName.setText(selectedWalletURI.getPath());
+                        selectedPassWalletURI = data.getData();
+                        Log.i(TAG, "Uri: " + selectedPassWalletURI.toString());
+                        ActivityUtils.saveSelectedFileToPreferences(this, selectedPassWalletURI);
+                        setSelectedPassWalletNameLabel();
                     } else {
                         Log.e(TAG, "Data is null, resultCode " + resultCode);
                     }
