@@ -5,7 +5,9 @@ import android.util.Log;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ro.eu.passwallet.model.UserAccount;
@@ -83,6 +85,15 @@ public class UserAccountDAO {
 
     public List<UserAccount> getUserAccounts() {
         return Collections.unmodifiableList(userAccounts);
+    }
+
+    public List<UserAccount> getSortedUserAccounts(Comparator<UserAccount> comparator) {
+        if (comparator == null) {
+            return getUserAccounts();
+        }
+        List<UserAccount> sortedUserAccounts = new ArrayList<>(userAccounts);
+        Collections.sort(sortedUserAccounts, comparator);
+        return Collections.unmodifiableList(sortedUserAccounts);
     }
 
     public Integer getMaxId() {

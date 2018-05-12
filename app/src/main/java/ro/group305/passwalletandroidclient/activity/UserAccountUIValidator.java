@@ -18,13 +18,14 @@ class UserAccountUIValidator {
     }
 
     public boolean isValid(UserAccount userAccount) {
+        boolean valid = true;
         if (!isValueValid(userAccount.getNickName())) {
             Log.e(TAG, "Nickname is empty.");
             EditText nickNameEditText = context.findViewById(R.id.nick_name_EditText);
             if (nickNameEditText != null) {
                 nickNameEditText.setError("Cannot be empty");
             }
-            return false;
+            valid = false;
         }
 
         if (!isValueValid(userAccount.getName())) {
@@ -33,7 +34,7 @@ class UserAccountUIValidator {
             if (nameEditText != null) {
                 nameEditText.setError("Cannot be empty");
             }
-            return false;
+            valid = false;
         }
 
         if (!isValueValid(userAccount.getPassword())) {
@@ -42,10 +43,10 @@ class UserAccountUIValidator {
             if (passwordEditText != null) {
                 passwordEditText.setError("Cannot be empty");
             }
-            return false;
+            valid = false;
         }
 
-        return true;
+        return valid;
     }
 
     private boolean isValueValid(String value) {

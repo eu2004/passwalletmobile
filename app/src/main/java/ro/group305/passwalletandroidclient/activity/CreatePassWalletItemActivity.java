@@ -11,12 +11,12 @@ import android.widget.EditText;
 import ro.eu.passwallet.model.UserAccount;
 import ro.group305.passwalletandroidclient.R;
 
-public class AddPassWalletItemActivity extends AppCompatActivity {
+public class CreatePassWalletItemActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_pass_wallet_item);
+        setContentView(R.layout.activity_create_pass_wallet_item);
         createCreatePasswalletItemButton();
     }
 
@@ -27,7 +27,7 @@ public class AddPassWalletItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 UserAccount userAccount = buildUserAccount();
-                UserAccountUIValidator validator = new UserAccountUIValidator(AddPassWalletItemActivity.this);
+                UserAccountUIValidator validator = new UserAccountUIValidator(CreatePassWalletItemActivity.this);
                 if (!validator.isValid(userAccount)) {
                     return;
                 }

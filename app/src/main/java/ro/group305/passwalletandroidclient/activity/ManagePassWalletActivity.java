@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import ro.eu.passwallet.model.UserAccount;
@@ -119,7 +121,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                 byte[] newContent = userAccountDAO.updateUserAccount(updatedUserAccount);
                 if (newContent != null) {
                     UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
-                    userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
+                    userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
                 }
             } catch (Exception exception) {
                 Log.e(TAG, exception.getMessage(), exception);
@@ -138,7 +140,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                             byte[] newContent = userAccountDAO.deleteUserAccount(userAccount);
                             if (newContent != null) {
                                 UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
-                                userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
+                                userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
                                 initAccountsCount();
                             }
                         } catch (Exception exception) {
@@ -166,7 +168,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                 byte[] newContent = userAccountDAO.createUserAccount(newUserAccount);
                 if (newContent != null) {
                     UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
-                    userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
+                    userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
                 }
             } catch (Exception exception) {
                 Log.e(TAG, exception.getMessage(), exception);
@@ -176,7 +178,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     }
 
     private void addUserAccount() {
-        Intent intent = new Intent(this, AddPassWalletItemActivity.class);
+        Intent intent = new Intent(this, CreatePassWalletItemActivity.class);
         startActivityForResult(intent, ADD_ITEM_ACTION_RESULT);
     }
 
@@ -203,9 +205,18 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         });
     }
 
+    private List<UserAccount> getUserAccountsSortedByNickName() {
+        return userAccountDAO.getSortedUserAccounts(new Comparator<UserAccount>() {
+            @Override
+            public int compare(UserAccount o1, UserAccount o2) {
+                return o1.getNickName().compareToIgnoreCase(o2.getNickName());
+            }
+        });
+    }
+
     private void createSearchView() {
         userAccountsAdapter = new UserAccountsListAdapter(this.getApplicationContext(),
-                R.layout.accounts_list_items, R.id.list_item, userAccountDAO.getUserAccounts(), new String[]{"nickName"});
+                R.layout.accounts_list_items, R.id.list_item, getUserAccountsSortedByNickName(), new String[]{"nickName"});
         SearchView search = findViewById(R.id.search);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
