@@ -228,7 +228,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     }
 
     private void createSearchView() {
-        userAccountsAdapter = new UserAccountsListAdapter(this.getApplicationContext(),
+        userAccountsAdapter = new UserAccountsListAdapter(this,
                 R.layout.accounts_list_items, R.id.list_item, getUserAccountsSortedByNickName(), new String[]{"nickName"});
         SearchView search = findViewById(R.id.search);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

@@ -1,5 +1,6 @@
 package ro.group305.passwalletandroidclient.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -137,7 +138,21 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         for (String attribute : attributesToDisplay) {
             itemText.append(item.get(attribute)).append(" ");
         }
+
         text.setText(itemText);
+
+        if (this.context instanceof Activity) {
+            ((Activity) UserAccountsListAdapter.this.context).registerForContextMenu(text);
+            text.setOnClickListener(new android.view.View.OnClickListener()
+            {
+                public void onClick(View v)
+                {
+                    ((Activity) UserAccountsListAdapter.this.context).openContextMenu(v);
+                    v.showContextMenu();
+
+                }
+            });
+        }
 
         return view;
     }
@@ -175,15 +190,15 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         return options;
     }
 
-    private List<Map<String,String>> getAdapterData(List<UserAccount> accounts) {
-        List<Map<String,String>> data = new ArrayList<>();
+    private List<Map<String, String>> getAdapterData(List<UserAccount> accounts) {
+        List<Map<String, String>> data = new ArrayList<>();
         for (UserAccount userAccount : accounts) {
             data.add(transformUserAccountToMap(userAccount));
         }
         return data;
     }
 
-    private Map<String,String> transformUserAccountToMap(UserAccount userAccount) {
+    private Map<String, String> transformUserAccountToMap(UserAccount userAccount) {
         Map<String, String> data = new HashMap<>();
         data.put("id", userAccount.getId().toString().toLowerCase());
         data.put("description", userAccount.getDescription() == null ? "" : userAccount.getDescription().toLowerCase());
@@ -244,7 +259,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
         private String valueToString(Map<String, ?> value) {
             StringBuilder valuesString = new StringBuilder();
-            for(Map.Entry<String, ?> entry : value.entrySet()) {
+            for (Map.Entry<String, ?> entry : value.entrySet()) {
                 valuesString.append(entry.getValue().toString()).append(" ");
             }
             return valuesString.toString();
