@@ -49,6 +49,7 @@
                     android:id="@+id/nick_name_EditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
                     android:ems="12" />
             </LinearLayout>
         </TableRow>
@@ -73,6 +74,7 @@
                     android:id="@+id/name_EditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
                     android:ems="12" />
             </LinearLayout>
         </TableRow>
@@ -97,6 +99,7 @@
                     android:id="@+id/password_EditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
                     android:ems="12"
                     android:inputType="textPassword" />
             </LinearLayout>
@@ -122,6 +125,7 @@
                     android:id="@+id/site_EditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
                     android:ems="12" />
             </LinearLayout>
         </TableRow>
@@ -146,6 +150,7 @@
                     android:id="@+id/description_EditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
                     android:ems="12" />
             </LinearLayout>
         </TableRow>
