@@ -5,31 +5,53 @@
     android:layout_height="match_parent"
     tools:context=".activity.ManagePassWalletActivity">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:orientation="vertical">
 
         <android.support.v7.widget.SearchView
             android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:clickable="true" />
 
         <ListView
             android:id="@+id/list_view"
             android:layout_width="fill_parent"
-            android:layout_height="400dp"
-            android:layout_below="@+id/search" />
+            android:layout_height="510dp"
+            android:layout_below="@+id/search"
+            android:layout_marginLeft="5dp" />
 
-        <Button
-            android:id="@+id/create_passwallet_item_button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/list_view"
-            android:layout_marginTop="20dp"
-            android:text="Add" />
-    </RelativeLayout>
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/create_passwallet_item_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/list_view"
+                android:text="Add" />
+
+            <TextView
+                android:id="@+id/accounts_count_label_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="200dp"
+                android:text="Total accounts:" />
+
+            <TextView
+                android:id="@+id/accounts_count_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="" />
+        </LinearLayout>
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

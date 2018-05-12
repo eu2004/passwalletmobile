@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.Map;
 
@@ -50,10 +51,17 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             userAccountDAO = new UserAccountDAO(cryptographyService.decrypt(UriUtils.getUriContent(encryptedWalletFileURI, getContentResolver())));
             createSearchView();
             createAddButton();
+            initAccountsCount();
         } catch (Exception exception) {
             Log.e(TAG, exception.getMessage(), exception);
-            ActivityUtils.displayErrorMessage(this, "Error loading wallet", exception.getMessage());
+            ActivityUtils.displayErrorMessage(this, "Error loading PassWallet", exception.getMessage());
+            finish();
         }
+    }
+
+    private void initAccountsCount() {
+        TextView accountsCount = findViewById(R.id.accounts_count_textView);
+        accountsCount.setText(String.valueOf(userAccountDAO.getUserAccountsCount()));
     }
 
     @Override
@@ -62,6 +70,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         switch (requestCode) {
             case ADD_ITEM_ACTION_RESULT:
                 onAddItemActionResult(resultCode, data);
+                initAccountsCount();
                 break;
             case EDIT_ITEM_ACTION_RESULT:
                 onEditItemActionResult(resultCode, data);
@@ -130,6 +139,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                             if (newContent != null) {
                                 UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
                                 userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
+                                initAccountsCount();
                             }
                         } catch (Exception exception) {
                             Log.e(TAG, exception.getMessage(), exception);

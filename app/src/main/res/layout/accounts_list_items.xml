@@ -19,7 +19,7 @@
             android:layout_height="150px"
             android:clickable="true"
             android:paddingEnd="10px"
-            android:text="User"
+            android:text=""
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:footerDividersEnabled="false"

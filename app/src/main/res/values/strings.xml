@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">passwallet</string>
-    <string name="search_hint">Search for accounts</string>
+    <string name="app_name">PassWallet 2.0</string>
+    <string name="search_hint">Search For User Accounts</string>
+    <string name="createPassWalletFile"><a href="#">New PassWallet</a></string>
 </resources>

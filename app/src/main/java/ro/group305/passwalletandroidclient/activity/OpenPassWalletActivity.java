@@ -20,13 +20,14 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
 
     private static final int READ_REQUEST_CODE = 42;
-    private static final int CREATE_PASSWALLET_ACTION_REQUEST_CODE = 43;
     private Uri selectedWalletURI;
+    private TextView selectedWalletName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_pass_wallet);
+        selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
 
         createBrowsePasswalletButton();
 
@@ -42,19 +43,18 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         createNewPasswalletTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Create new passwallet");
+                Log.d(TAG, "Create new passwallet");
                 Intent intent = new Intent(OpenPassWalletActivity.this, CreatePassWalletActivity.class);
-                startActivityForResult(intent, CREATE_PASSWALLET_ACTION_REQUEST_CODE);
+                startActivity(intent);
             }
         });
     }
 
     private void initSelectedWalletURI() {
-        TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
         String lastWalletURI = ActivityUtils.loadLastSelectedFile(this);
-        selectedWalletName.setText(lastWalletURI);
-        if (lastWalletURI.length() > 0) {
-            selectedWalletURI = Uri.parse(lastWalletURI);
+        if (lastWalletURI != null && lastWalletURI.trim().length() > 0) {
+            selectedWalletURI = Uri.parse(lastWalletURI.trim());
+            selectedWalletName.setText(selectedWalletURI.getPath());
         }
     }
 
@@ -63,25 +63,33 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         openSelectedPasswalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //validate selected URI
                 if (!UriUtils.isUriValid(selectedWalletURI)) {
-                    Log.e(TAG, "No wallet file is selected or file path is incorrect!");
+                    Log.e(TAG, "No passwallet file is selected or file path is incorrect!");
+                    ActivityUtils.displayErrorMessage(OpenPassWalletActivity.this, "Error opening passwallet", "No \"passwallet\" file is selected or file path is incorrect!");
                     return;
                 }
-                try {
-                    //validate first the password
-                    EditText password = findViewById(R.id.walletKey);
-                    CryptographyService cryptographyService = new CryptographyService(password.getText().toString());
-                    cryptographyService.decrypt(UriUtils.getUriContent(selectedWalletURI, getContentResolver()));
 
-                    //continue with the search list
-                    Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
-                    intent.putExtra("encryptedWalletFileURI", selectedWalletURI.toString());
-                    intent.putExtra("key", password.getText().toString().getBytes());
-                    startActivity(intent);
-                } catch (Exception exception) {
-                    ActivityUtils.displayErrorMessage(OpenPassWalletActivity.this, "Error loading wallet", exception.getMessage());
+                //validate key
+                EditText password = findViewById(R.id.walletKey);
+                if (password.getText().toString().length() == 0) {
+                    password.setError("Key is mandatory!");
+                    return;
                 }
 
+                try {
+                    //validate decryption
+                    new CryptographyService(password.getText().toString()).decrypt(UriUtils.getUriContent(selectedWalletURI, getContentResolver()));
+                } catch (Exception exception) {
+                    ActivityUtils.displayErrorMessage(OpenPassWalletActivity.this, "Error opening passwallet", exception.getMessage());
+                    return;
+                }
+
+                //go to search list
+                Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
+                intent.putExtra("encryptedWalletFileURI", selectedWalletURI.toString());
+                intent.putExtra("key", password.getText().toString().getBytes());
+                startActivity(intent);
             }
         });
     }
@@ -110,21 +118,11 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                         selectedWalletURI = data.getData();
                         Log.i(TAG, "Uri: " + selectedWalletURI.toString());
                         ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
-                        TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
-                        selectedWalletName.setText(selectedWalletURI.toString());
+                        selectedWalletName.setText(selectedWalletURI.getPath());
                     } else {
                         Log.e(TAG, "Data is null, resultCode " + resultCode);
                     }
                 }
-                break;
-            case CREATE_PASSWALLET_ACTION_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-                    if (data != null) {
-                        TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
-                        selectedWalletName.setText(data.getStringExtra("selectedWalletURI"));
-                    }
-                }
-
                 break;
         }
     }

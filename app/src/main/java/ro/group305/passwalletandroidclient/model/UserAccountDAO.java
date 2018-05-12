@@ -17,7 +17,7 @@ public class UserAccountDAO {
     private UserAccountXMLSerializer userAccountXMLSerializer = new UserAccountXMLSerializer();
 
     public UserAccountDAO(byte[] decryptedWalletFile) throws IOException, XmlPullParserException {
-        userAccounts = userAccountXMLSerializer.unmarshal(decryptedWalletFile);
+        userAccounts = Collections.synchronizedList(userAccountXMLSerializer.unmarshal(decryptedWalletFile));
     }
 
     public UserAccount getUserAccountById(long id) {
@@ -29,9 +29,13 @@ public class UserAccountDAO {
         return null;
     }
 
+    public int getUserAccountsCount() {
+        return userAccounts.size();
+    }
+
     public byte[] createUserAccount(UserAccount userAccount) {
-        Integer maxId = getMaxId();
         synchronized (UserAccountDAO.class) {
+            Integer maxId = getMaxId();
             userAccount.setId(maxId);
             userAccounts.add(userAccount);
             try {
