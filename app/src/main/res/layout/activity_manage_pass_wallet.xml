@@ -20,7 +20,7 @@
         <ListView
             android:id="@+id/list_view"
             android:layout_width="fill_parent"
-            android:layout_height="510dp"
+            android:layout_height="425dp"
             android:layout_below="@+id/search"
             android:layout_marginLeft="5dp" />
 
@@ -41,8 +41,8 @@
                 android:id="@+id/accounts_count_label_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="200dp"
-                android:text="Total accounts:" />
+                android:layout_marginLeft="190dp"
+                android:text="Total:" />
 
             <TextView
                 android:id="@+id/accounts_count_textView"

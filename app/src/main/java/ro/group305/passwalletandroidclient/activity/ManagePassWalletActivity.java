@@ -34,6 +34,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
     private static final int EDIT_ITEM_ACTION_RESULT = 0;
     private static final int ADD_ITEM_ACTION_RESULT = 1;
+    private static final int VIEW_ITEM_ACTION_RESULT = 2;
 
     private UserAccountDAO userAccountDAO;
     private CryptographyService cryptographyService;
@@ -77,6 +78,8 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             case EDIT_ITEM_ACTION_RESULT:
                 onEditItemActionResult(resultCode, data);
                 break;
+            case VIEW_ITEM_ACTION_RESULT:
+                break;
         }
     }
 
@@ -84,6 +87,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.list_view) {
             menu.add("Copy");
+            menu.add("View");
             menu.add("Edit");
             menu.add("Delete");
         }
@@ -100,7 +104,10 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         if ("Copy".equals(item.getTitle())) {
             Log.d(TAG, "Copy " + userAccount.getNickName());
             copyInfoToClipboard(userAccount);
-        } else if ("Edit".equals(item.getTitle())) {
+        } else if ("View".equals(item.getTitle())) {
+            Log.d(TAG, "View ...");
+            viewUserAccount(userAccount);
+        }else if ("Edit".equals(item.getTitle())) {
             Log.d(TAG, "Edit " + userAccount.getNickName());
             editUserAccount(userAccount);
         } else if ("Delete".equals(item.getTitle())) {
@@ -180,6 +187,12 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     private void addUserAccount() {
         Intent intent = new Intent(this, CreatePassWalletItemActivity.class);
         startActivityForResult(intent, ADD_ITEM_ACTION_RESULT);
+    }
+
+    private void viewUserAccount(UserAccount userAccount) {
+        Intent intent = new Intent(this, ViewPassWalletItemActivity.class);
+        intent.putExtra("selectedUserAccount", userAccount);
+        startActivityForResult(intent, VIEW_ITEM_ACTION_RESULT);
     }
 
     private void editUserAccount(UserAccount userAccount) {

@@ -30,10 +30,9 @@
         <activity
             android:name=".activity.CreatePassWalletActivity"
             android:parentActivityName=".activity.OpenPassWalletActivity" />
-        <activity
-            android:name=".activity.EditPassWalletItemActivity"/>
-        <activity
-            android:name=".activity.CreatePassWalletItemActivity"/>
+        <activity android:name=".activity.EditPassWalletItemActivity" />
+        <activity android:name=".activity.CreatePassWalletItemActivity" />
+        <activity android:name=".activity.ViewPassWalletItemActivity"/>
     </application>
 
 </manifest>
