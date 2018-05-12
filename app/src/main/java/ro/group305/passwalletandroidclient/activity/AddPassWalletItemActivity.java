@@ -1,4 +1,4 @@
-package ro.group305.passwalletandroidclient;
+package ro.group305.passwalletandroidclient.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ro.eu.passwallet.model.UserAccount;
-import ro.group305.passwalletandroidclient.utils.UserAccountUIValidator;
+import ro.group305.passwalletandroidclient.R;
 
 public class AddPassWalletItemActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package ro.group305.passwalletandroidclient;
+package ro.group305.passwalletandroidclient.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,20 +16,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import ro.eu.passwallet.model.UserAccount;
 import ro.eu.passwallet.service.crypt.CryptographyService;
+import ro.group305.passwalletandroidclient.R;
+import ro.group305.passwalletandroidclient.model.UserAccountDAO;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
-import ro.group305.passwalletandroidclient.utils.WalletFileURI;
-
-/**
- * Created by emilu on 2/25/2018.
- */
+import ro.group305.passwalletandroidclient.utils.UriUtils;
 
 public class ManagePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
@@ -37,10 +33,9 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     private static final int ADD_ITEM_ACTION_RESULT = 1;
 
     private UserAccountDAO userAccountDAO;
-    private WalletFileURI walletFileURI;
     private CryptographyService cryptographyService;
-
     private UserAccountsListAdapter userAccountsAdapter;
+    private Uri encryptedWalletFileURI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +44,10 @@ public class ManagePassWalletActivity extends AppCompatActivity {
 
         try {
             Intent intent = getIntent();
-            String encryptedWalletFileURIStr = intent.getStringExtra("encryptedWalletFileURI");
+            encryptedWalletFileURI = Uri.parse(intent.getStringExtra("encryptedWalletFileURI"));
             String key = new String(intent.getByteArrayExtra("key"));
             cryptographyService = new CryptographyService(key);
-            walletFileURI = new WalletFileURI(Uri.parse(encryptedWalletFileURIStr), getContentResolver());
-            userAccountDAO = new UserAccountDAO(cryptographyService.decrypt(walletFileURI.getContent()));
+            userAccountDAO = new UserAccountDAO(cryptographyService.decrypt(UriUtils.getUriContent(encryptedWalletFileURI, getContentResolver())));
             createSearchView();
             createAddButton();
         } catch (Exception exception) {
@@ -115,7 +109,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             try {
                 byte[] newContent = userAccountDAO.updateUserAccount(updatedUserAccount);
                 if (newContent != null) {
-                    walletFileURI.saveFileContent(cryptographyService.encrypt(newContent));
+                    UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
                     userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
                 }
             } catch (Exception exception) {
@@ -134,7 +128,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                         try {
                             byte[] newContent = userAccountDAO.deleteUserAccount(userAccount);
                             if (newContent != null) {
-                                walletFileURI.saveFileContent(cryptographyService.encrypt(newContent));
+                                UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
                                 userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
                             }
                         } catch (Exception exception) {
@@ -161,7 +155,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             try {
                 byte[] newContent = userAccountDAO.createUserAccount(newUserAccount);
                 if (newContent != null) {
-                    walletFileURI.saveFileContent(cryptographyService.encrypt(newContent));
+                    UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
                     userAccountsAdapter.updateUserAccountsList(userAccountDAO.getUserAccounts());
                 }
             } catch (Exception exception) {
@@ -178,7 +172,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
 
     private void editUserAccount(UserAccount userAccount) {
         Intent intent = new Intent(this, EditPassWalletItemActivity.class);
-        intent.putExtra("selectedUserAccount", (Serializable) userAccount);
+        intent.putExtra("selectedUserAccount", userAccount);
         startActivityForResult(intent, EDIT_ITEM_ACTION_RESULT);
     }
 

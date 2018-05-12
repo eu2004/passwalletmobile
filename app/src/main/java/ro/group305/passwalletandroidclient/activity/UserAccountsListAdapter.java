@@ -1,4 +1,4 @@
-package ro.group305.passwalletandroidclient;
+package ro.group305.passwalletandroidclient.activity;
 
 import android.content.Context;
 import android.support.annotation.IdRes;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 import ro.eu.passwallet.model.UserAccount;
 
-public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
+class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
     private final LayoutInflater inflater;
 
@@ -40,8 +40,6 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
     private boolean notifyOnChange = true;
 
-    // A copy of the original accounts array, initialized from and then used instead as soon as
-    // the filter ArrayFilter is used. accounts will then only contain the filtered values.
     private ArrayList<Map<String, ?>> originalValues;
     private ArrayFilter filter;
     private String[] attributesToDisplay;
@@ -63,9 +61,6 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         this.notifyDataSetChanged();
     }
 
-    /**
-     * Remove all elements from the list.
-     */
     public void clear() {
         if (originalValues != null) {
             originalValues.clear();
@@ -199,11 +194,6 @@ public class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         return data;
     }
 
-    /**
-     * <p>An array filter constrains the content of the array adapter with
-     * a prefix. Each item that does not start with the supplied prefix
-     * is removed from the list.</p>
-     */
     private class ArrayFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence prefix) {

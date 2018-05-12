@@ -1,4 +1,4 @@
-package ro.group305.passwalletandroidclient;
+package ro.group305.passwalletandroidclient.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,9 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import ro.eu.passwallet.service.crypt.CryptographyService;
+import ro.group305.passwalletandroidclient.R;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
-import ro.group305.passwalletandroidclient.utils.PasswalletPreferencesUtils;
-import ro.group305.passwalletandroidclient.utils.WalletFileURI;
+import ro.group305.passwalletandroidclient.utils.UriUtils;
 
 public class OpenPassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
@@ -51,7 +51,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
     private void initSelectedWalletURI() {
         TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
-        String lastWalletURI = PasswalletPreferencesUtils.loadLastSelectedFile(this);
+        String lastWalletURI = ActivityUtils.loadLastSelectedFile(this);
         selectedWalletName.setText(lastWalletURI);
         if (lastWalletURI.length() > 0) {
             selectedWalletURI = Uri.parse(lastWalletURI);
@@ -63,7 +63,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         openSelectedPasswalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!WalletFileURI.isValid(selectedWalletURI)) {
+                if (!UriUtils.isUriValid(selectedWalletURI)) {
                     Log.e(TAG, "No wallet file is selected or file path is incorrect!");
                     return;
                 }
@@ -71,8 +71,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                     //validate first the password
                     EditText password = findViewById(R.id.walletKey);
                     CryptographyService cryptographyService = new CryptographyService(password.getText().toString());
-                    WalletFileURI walletFileURI = new WalletFileURI(selectedWalletURI, getContentResolver());
-                    cryptographyService.decrypt(walletFileURI.getContent());
+                    cryptographyService.decrypt(UriUtils.getUriContent(selectedWalletURI, getContentResolver()));
 
                     //continue with the search list
                     Intent intent = new Intent(OpenPassWalletActivity.this, ManagePassWalletActivity.class);
@@ -110,7 +109,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                     if (data != null) {
                         selectedWalletURI = data.getData();
                         Log.i(TAG, "Uri: " + selectedWalletURI.toString());
-                        PasswalletPreferencesUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
+                        ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
                         TextView selectedWalletName = findViewById(R.id.selected_wallet_name_textView);
                         selectedWalletName.setText(selectedWalletURI.toString());
                     } else {

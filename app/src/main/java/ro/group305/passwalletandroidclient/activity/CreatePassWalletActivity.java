@@ -1,4 +1,4 @@
-package ro.group305.passwalletandroidclient;
+package ro.group305.passwalletandroidclient.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,10 +14,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ro.eu.passwallet.service.crypt.CryptographyService;
+import ro.group305.passwalletandroidclient.R;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
-import ro.group305.passwalletandroidclient.utils.FileUtils;
-import ro.group305.passwalletandroidclient.utils.PasswalletPreferencesUtils;
-import ro.group305.passwalletandroidclient.utils.WalletFileURI;
+import ro.group305.passwalletandroidclient.utils.UriUtils;
 
 public class CreatePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
@@ -42,13 +41,13 @@ public class CreatePassWalletActivity extends AppCompatActivity {
                     if (data != null) {
                         Uri selectedWalletURI = data.getData();
                         try {
-                            new WalletFileURI(selectedWalletURI, this.getContentResolver()).saveFileContent(encryptedDefaultPasswalletContent);
+                            UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), encryptedDefaultPasswalletContent);
                         } catch (IOException e) {
                             Log.e(TAG, e.getMessage(), e);
                             ActivityUtils.displayErrorMessage(this, "Fatal Error", "Error saving passwallet file:" + e.getMessage());
                             return;
                         }
-                        PasswalletPreferencesUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
+                        ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
                         startManagePassWalletActivity(selectedWalletURI);
                     } else {
                         Log.e(TAG, "Data is null, resultCode " + resultCode);
@@ -96,15 +95,12 @@ public class CreatePassWalletActivity extends AppCompatActivity {
 
     private boolean validatePasswalletKey() {
         EditText password = findViewById(R.id.walletKey);
-        if (password.getText().toString() == null || password.getText().toString().length() == 0) {
-            return false;
-        }
-        return true;
+        return password.getText().toString() != null && password.getText().toString().length() != 0;
     }
 
     private byte[] loadDefaultPasswalletFromTemplate() throws IOException {
         try (InputStream passwalletTemplate = getResources().getAssets().open("passwallet_xml_file_template.xml")) {
-            return FileUtils.loadFileContentFromStream(passwalletTemplate);
+            return UriUtils.loadInputStreamToByteArray(passwalletTemplate);
         }
     }
 
