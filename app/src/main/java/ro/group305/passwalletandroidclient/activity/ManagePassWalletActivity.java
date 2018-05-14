@@ -26,9 +26,8 @@ import java.util.Map;
 import ro.eu.passwallet.model.UserAccount;
 import ro.eu.passwallet.service.crypt.CryptographyService;
 import ro.group305.passwalletandroidclient.R;
-import ro.group305.passwalletandroidclient.model.UserAccountDAO;
+import ro.group305.passwalletandroidclient.model.UserAccountXMLFileDAO;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
-import ro.group305.passwalletandroidclient.utils.UriUtils;
 
 public class ManagePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
@@ -36,7 +35,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     private static final int ADD_ITEM_ACTION_RESULT = 1;
     private static final int VIEW_ITEM_ACTION_RESULT = 2;
 
-    private UserAccountDAO userAccountDAO;
+    private UserAccountXMLFileDAO userAccountDAO;
     private CryptographyService cryptographyService;
     private UserAccountsListAdapter userAccountsAdapter;
     private Uri encryptedWalletFileURI;
@@ -51,7 +50,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             encryptedWalletFileURI = Uri.parse(intent.getStringExtra("encryptedWalletFileURI"));
             String key = new String(intent.getByteArrayExtra("key"));
             cryptographyService = new CryptographyService(key);
-            userAccountDAO = new UserAccountDAO(cryptographyService.decrypt(UriUtils.getUriContent(encryptedWalletFileURI, getContentResolver())));
+            userAccountDAO = new UserAccountXMLFileDAO(encryptedWalletFileURI, getContentResolver(), cryptographyService);
             createSearchView();
             createAddButton();
             initAccountsCount();
@@ -99,7 +98,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         ListView listView = findViewById(R.id.list_view);
         Map<String, String> selectedItem = (Map<String, String>) listView.getItemAtPosition(menuInfo.position);
-        UserAccount userAccount = userAccountDAO.getUserAccountById(Integer.parseInt(selectedItem.get("id")));
+        UserAccount userAccount = userAccountDAO.findUserAccountById(Integer.parseInt(selectedItem.get("id")));
 
         if ("Copy".equals(item.getTitle())) {
             Log.d(TAG, "Copy " + userAccount.getNickName());
@@ -125,9 +124,8 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             UserAccount updatedUserAccount = (UserAccount) data.getSerializableExtra("updatedUserAccount");
             try {
-                byte[] newContent = userAccountDAO.updateUserAccount(updatedUserAccount);
-                if (newContent != null) {
-                    UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
+                boolean updated = userAccountDAO.updateUserAccount(updatedUserAccount);
+                if (updated) {
                     userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
                 }
             } catch (Exception exception) {
@@ -144,9 +142,8 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         try {
-                            byte[] newContent = userAccountDAO.deleteUserAccount(userAccount);
-                            if (newContent != null) {
-                                UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
+                            boolean deleted = userAccountDAO.deleteUserAccountById(userAccount.getId());
+                            if (deleted) {
                                 userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
                                 initAccountsCount();
                             }
@@ -172,11 +169,8 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             UserAccount newUserAccount = (UserAccount) data.getSerializableExtra("newUserAccount");
             try {
-                byte[] newContent = userAccountDAO.createUserAccount(newUserAccount);
-                if (newContent != null) {
-                    UriUtils.saveUriContent(encryptedWalletFileURI, getContentResolver(), cryptographyService.encrypt(newContent));
-                    userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
-                }
+                userAccountDAO.createUserAccount(newUserAccount);
+                userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
             } catch (Exception exception) {
                 Log.e(TAG, exception.getMessage(), exception);
                 ActivityUtils.displayErrorMessage(this, "Error creating passwallet item", exception.getMessage());
