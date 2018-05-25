@@ -16,12 +16,15 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import ro.eu.passwallet.model.UserAccount;
+import ro.group305.passwalletandroidclient.model.UserAccountXMLFileDAO;
 
 class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
@@ -41,35 +44,33 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
     private boolean notifyOnChange = true;
 
-    private ArrayList<Map<String, ?>> originalValues;
+    private ArrayList<Map<String, String>> originalValues;
     private ArrayFilter filter;
     private String[] attributesToDisplay;
+    private UserAccountXMLFileDAO userAccountDAO;
+    private final Comparator nickNameComparator = new Comparator<UserAccount>() {
+        @Override
+        public int compare(UserAccount o1, UserAccount o2) {
+            return o1.getNickName().compareToIgnoreCase(o2.getNickName());
+        }
+    };
 
     public UserAccountsListAdapter(@NonNull Context context, @LayoutRes int resource,
-                                   @IdRes int textViewResourceId, @NonNull List<UserAccount> userAccountList,
+                                   @IdRes int textViewResourceId, @NonNull UserAccountXMLFileDAO userAccountDAO,
                                    @NonNull String[] attributeToDisplay) {
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.resource = dropDownResource = resource;
-        accounts = getAdapterData(userAccountList);
+        this.userAccountDAO = userAccountDAO;
+        accounts = getAdapterData(userAccountDAO.getSortedUserAccounts(nickNameComparator));
         fieldId = textViewResourceId;
         this.attributesToDisplay = attributeToDisplay;
     }
 
-    public void updateUserAccountsList(@NonNull List<UserAccount> userAccountList) {
-        accounts = getAdapterData(userAccountList);
+    public void updateUserAccountsList() {
+        accounts = getAdapterData(userAccountDAO.getSortedUserAccounts(nickNameComparator));
         originalValues = null;
         this.notifyDataSetChanged();
-    }
-
-    public void clear() {
-        if (originalValues != null) {
-            originalValues.clear();
-        } else {
-            accounts.clear();
-        }
-        objectsFromResources = false;
-        if (notifyOnChange) notifyDataSetChanged();
     }
 
     @Override
@@ -190,7 +191,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         return options;
     }
 
-    private List<Map<String, String>> getAdapterData(List<UserAccount> accounts) {
+    private List<Map<String, String>> getAdapterData(Collection<UserAccount> accounts) {
         List<Map<String, String>> data = new ArrayList<>();
         for (UserAccount userAccount : accounts) {
             data.add(transformUserAccountToMap(userAccount));
@@ -215,7 +216,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
             final FilterResults results = new FilterResults();
 
             if (originalValues == null) {
-                originalValues = new ArrayList<>(accounts);
+                originalValues = new ArrayList<Map<String, String>>(accounts);
             }
 
             if (prefix == null || prefix.length() == 0) {
@@ -225,44 +226,14 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
                 results.count = list.size();
             } else {
                 final String prefixString = prefix.toString().toLowerCase();
-
-                final ArrayList<Map<String, ?>> values;
-                values = new ArrayList<>(originalValues);
-
-                final int count = values.size();
-                final ArrayList<Map<String, ?>> newValues = new ArrayList<>();
-
-                for (int i = 0; i < count; i++) {
-                    final Map<String, ?> value = values.get(i);
-                    final String valueText = valueToString(value);
-
-                    // First match against the whole, non-splitted value
-                    if (valueText.startsWith(prefixString)) {
-                        newValues.add(value);
-                    } else {
-                        final String[] words = valueText.split(" ");
-                        for (String word : words) {
-                            if (word.startsWith(prefixString)) {
-                                newValues.add(value);
-                                break;
-                            }
-                        }
-                    }
-                }
-
+                List<UserAccount> filteredUsersAccounts = new ArrayList<>(userAccountDAO.findUsersAccountsByName(prefixString));
+                Collections.sort(filteredUsersAccounts, nickNameComparator);
+                final List<Map<String, String>> newValues = getAdapterData(filteredUsersAccounts);
                 results.values = newValues;
                 results.count = newValues.size();
             }
 
             return results;
-        }
-
-        private String valueToString(Map<String, ?> value) {
-            StringBuilder valuesString = new StringBuilder();
-            for (Map.Entry<String, ?> entry : value.entrySet()) {
-                valuesString.append(entry.getValue().toString()).append(" ");
-            }
-            return valuesString.toString();
         }
 
         @Override

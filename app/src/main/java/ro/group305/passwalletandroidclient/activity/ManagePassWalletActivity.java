@@ -126,7 +126,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             try {
                 boolean updated = userAccountDAO.updateUserAccount(updatedUserAccount);
                 if (updated) {
-                    userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
+                    userAccountsAdapter.updateUserAccountsList();
                 }
             } catch (Exception exception) {
                 Log.e(TAG, exception.getMessage(), exception);
@@ -144,7 +144,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                         try {
                             boolean deleted = userAccountDAO.deleteUserAccountById(userAccount.getId());
                             if (deleted) {
-                                userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
+                                userAccountsAdapter.updateUserAccountsList();
                                 initAccountsCount();
                             }
                         } catch (Exception exception) {
@@ -170,7 +170,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             UserAccount newUserAccount = (UserAccount) data.getSerializableExtra("newUserAccount");
             try {
                 userAccountDAO.createUserAccount(newUserAccount);
-                userAccountsAdapter.updateUserAccountsList(getUserAccountsSortedByNickName());
+                userAccountsAdapter.updateUserAccountsList();
             } catch (Exception exception) {
                 Log.e(TAG, exception.getMessage(), exception);
                 ActivityUtils.displayErrorMessage(this, "Error creating passwallet item", exception.getMessage());
@@ -212,18 +212,9 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         });
     }
 
-    private List<UserAccount> getUserAccountsSortedByNickName() {
-        return userAccountDAO.getSortedUserAccounts(new Comparator<UserAccount>() {
-            @Override
-            public int compare(UserAccount o1, UserAccount o2) {
-                return o1.getNickName().compareToIgnoreCase(o2.getNickName());
-            }
-        });
-    }
-
     private void createSearchView() {
         userAccountsAdapter = new UserAccountsListAdapter(this,
-                R.layout.accounts_list_items, R.id.list_item, getUserAccountsSortedByNickName(), new String[]{"nickName"});
+                R.layout.accounts_list_items, R.id.list_item, userAccountDAO, new String[]{"nickName"});
         SearchView search = findViewById(R.id.search);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
