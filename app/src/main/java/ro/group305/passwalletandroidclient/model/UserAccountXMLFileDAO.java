@@ -15,24 +15,32 @@ import java.util.List;
 
 import ro.eu.passwallet.model.UserAccount;
 import ro.eu.passwallet.model.dao.IUserAccountDAO;
+import ro.eu.passwallet.service.ILoggerService;
 import ro.eu.passwallet.service.crypt.CryptographyService;
-import ro.group305.passwalletandroidclient.utils.UriUtils;
+import ro.eu.passwallet.service.xml.IXMLFileService;
+import ro.eu.passwallet.service.xml.XMLFileServiceException;
 
-public class UserAccountXMLFileDAO implements IUserAccountDAO{
+public class UserAccountXMLFileDAO implements IUserAccountDAO {
     private static final String TAG = "PassWallet";
 
+    private ro.eu.passwallet.model.dao.UserAccountXMLDAO coreUserAccountXMLDAO;
     private List<UserAccount> userAccounts;
-    private UserAccountXMLSerializer userAccountXMLSerializer = new UserAccountXMLSerializer();
-    private Uri encryptedWalletFileURI;
-    private ContentResolver contentResolver;
-    private CryptographyService cryptographyService;
 
     public UserAccountXMLFileDAO(Uri encryptedWalletFileURI, ContentResolver contentResolver, CryptographyService cryptographyService) throws IOException, XmlPullParserException {
-        this.encryptedWalletFileURI = encryptedWalletFileURI;
-        this.contentResolver = contentResolver;
-        this.cryptographyService = cryptographyService;
-        byte[] decryptedWalletFile = cryptographyService.decrypt(UriUtils.getUriContent(this.encryptedWalletFileURI, this.contentResolver));
-        userAccounts = Collections.synchronizedList(userAccountXMLSerializer.unmarshal(decryptedWalletFile));
+        final IXMLFileService fileService = new XMLFileService(encryptedWalletFileURI, contentResolver, cryptographyService);
+        coreUserAccountXMLDAO = new ro.eu.passwallet.model.dao.UserAccountXMLDAO(fileService, new ILoggerService() {
+
+            @Override
+            public void severe(String message, XMLFileServiceException e) {
+                Log.e(TAG, message, e);
+            }
+
+            @Override
+            public void severe(String message) {
+                Log.e(TAG, message);
+            }
+        });
+        userAccounts = new ArrayList<>(coreUserAccountXMLDAO.findAllUsersAccounts());
     }
 
     public int getUserAccountsCount() {
@@ -41,101 +49,44 @@ public class UserAccountXMLFileDAO implements IUserAccountDAO{
 
     @Override
     public UserAccount findUserAccountById(Integer id) {
-        for (UserAccount userAccount : userAccounts) {
-            if (id == userAccount.getId()) {
-                return userAccount;
-            }
-        }
-        return null;
+        return coreUserAccountXMLDAO.findUserAccountById(id);
     }
 
     @Override
     public Collection<UserAccount> findAllUsersAccounts() {
-        return Collections.unmodifiableList(userAccounts);
+        return coreUserAccountXMLDAO.findAllUsersAccounts();
     }
 
     @Override
     public Collection<UserAccount> findUsersAccountsByName(String name) {
-        throw new RuntimeException("Not implemented.");
+        return coreUserAccountXMLDAO.findUsersAccountsByName(name);
     }
 
     public Integer createUserAccount(UserAccount userAccount) {
-        synchronized (UserAccountXMLFileDAO.class) {
-            Integer maxId = getMaxId();
-            userAccount.setId(maxId);
-            userAccounts.add(userAccount);
-            try {
-                byte[] newXmlContent = userAccountXMLSerializer.marshal(userAccounts);
-                UriUtils.saveUriContent(this.encryptedWalletFileURI, this.contentResolver, this.cryptographyService.encrypt(newXmlContent));
-                return maxId;
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-        }
+        Integer id = coreUserAccountXMLDAO.createUserAccount(userAccount);
+        userAccounts = new ArrayList<>(coreUserAccountXMLDAO.findAllUsersAccounts());
+        return id;
     }
 
     @Override
     public boolean deleteUserAccountById(Integer id) {
-        synchronized (UserAccountXMLFileDAO.class) {
-            for (UserAccount userAccount : userAccounts) {
-                if (id.equals(userAccount.getId())) {
-                    userAccounts.remove(userAccount);
-                    try {
-                        byte[] newXmlContent = userAccountXMLSerializer.marshal(userAccounts);
-                        UriUtils.saveUriContent(this.encryptedWalletFileURI, this.contentResolver, this.cryptographyService.encrypt(newXmlContent));
-                        return true;
-                    } catch (IOException e) {
-                        Log.e(TAG, e.getMessage(), e);
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-            return false;
-        }
+        boolean deleted = coreUserAccountXMLDAO.deleteUserAccountById(id);
+        userAccounts = new ArrayList<>(coreUserAccountXMLDAO.findAllUsersAccounts());
+        return deleted;
     }
 
     public boolean updateUserAccount(UserAccount updatedUserAccount) {
-        synchronized (UserAccountXMLFileDAO.class) {
-            Integer id = updatedUserAccount.getId();
-            for (UserAccount userAccount : userAccounts) {
-                if (id.equals(userAccount.getId())) {
-                    userAccount.setDescription(updatedUserAccount.getDescription());
-                    userAccount.setPassword(updatedUserAccount.getPassword());
-                    userAccount.setNickName(updatedUserAccount.getNickName());
-                    userAccount.setName(updatedUserAccount.getName());
-                    userAccount.setSiteURL(updatedUserAccount.getSiteURL());
-                    try {
-                        byte[] newXmlContent = userAccountXMLSerializer.marshal(userAccounts);
-                        UriUtils.saveUriContent(this.encryptedWalletFileURI, this.contentResolver, this.cryptographyService.encrypt(newXmlContent));
-                        return true;
-                    } catch (IOException e) {
-                        Log.e(TAG, e.getMessage(), e);
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-
-            return false;
-        }
+        boolean updated = coreUserAccountXMLDAO.updateUserAccount(updatedUserAccount);
+        userAccounts = new ArrayList<>(coreUserAccountXMLDAO.findAllUsersAccounts());
+        return updated;
     }
 
     public List<UserAccount> getSortedUserAccounts(Comparator<UserAccount> comparator) {
         if (comparator == null) {
-            return (List<UserAccount>) findAllUsersAccounts();
+            return userAccounts;
         }
         List<UserAccount> sortedUserAccounts = new ArrayList<>(userAccounts);
         Collections.sort(sortedUserAccounts, comparator);
         return Collections.unmodifiableList(sortedUserAccounts);
-    }
-
-    private Integer getMaxId() {
-        Integer max = Integer.MIN_VALUE;
-        for (UserAccount account : userAccounts) {
-            if (account.getId() > max) {
-                max = account.getId();
-            }
-        }
-        return max + 1;
     }
 }

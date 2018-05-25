@@ -11,13 +11,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import ro.eu.passwallet.model.UserAccount;
 
 class UserAccountXMLSerializer {
 
-    public byte[] marshal(List<UserAccount> userAccounts) throws IOException {
+    public byte[] marshal(Collection<UserAccount> userAccounts) throws IOException {
         //https://www.ibm.com/developerworks/opensource/library/x-android/
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
@@ -62,7 +63,7 @@ class UserAccountXMLSerializer {
         serializer.endTag("", "userAccount");
     }
 
-    public List<UserAccount> unmarshal(byte[] decryptedWalletFile) throws XmlPullParserException, IOException {
+    public Collection<UserAccount> unmarshal(byte[] decryptedWalletFile) throws XmlPullParserException, IOException {
         XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
         XmlPullParser myParser = xmlFactoryObject.newPullParser();
         myParser.setInput(new ByteArrayInputStream(decryptedWalletFile), null);
