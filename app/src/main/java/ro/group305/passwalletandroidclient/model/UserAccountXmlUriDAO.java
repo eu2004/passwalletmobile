@@ -2,11 +2,7 @@ package ro.group305.passwalletandroidclient.model;
 
 import android.content.ContentResolver;
 import android.net.Uri;
-import android.util.Log;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,31 +11,18 @@ import java.util.List;
 
 import ro.eu.passwallet.model.UserAccount;
 import ro.eu.passwallet.model.dao.IUserAccountDAO;
-import ro.eu.passwallet.service.ILoggerService;
 import ro.eu.passwallet.service.crypt.CryptographyService;
-import ro.eu.passwallet.service.xml.IXMLFileService;
-import ro.eu.passwallet.service.xml.XMLFileServiceException;
+import ro.group305.passwalletandroidclient.service.LoggerService;
+import ro.group305.passwalletandroidclient.service.XMLFileService;
 
-public class UserAccountXMLFileDAO implements IUserAccountDAO {
+public class UserAccountXmlUriDAO implements IUserAccountDAO {
     private static final String TAG = "PassWallet";
 
     private ro.eu.passwallet.model.dao.UserAccountXMLDAO coreUserAccountXMLDAO;
     private List<UserAccount> userAccounts;
 
-    public UserAccountXMLFileDAO(Uri encryptedWalletFileURI, ContentResolver contentResolver, CryptographyService cryptographyService) throws IOException, XmlPullParserException {
-        final IXMLFileService fileService = new XMLFileService(encryptedWalletFileURI, contentResolver, cryptographyService);
-        coreUserAccountXMLDAO = new ro.eu.passwallet.model.dao.UserAccountXMLDAO(fileService, new ILoggerService() {
-
-            @Override
-            public void severe(String message, XMLFileServiceException e) {
-                Log.e(TAG, message, e);
-            }
-
-            @Override
-            public void severe(String message) {
-                Log.e(TAG, message);
-            }
-        });
+    public UserAccountXmlUriDAO(Uri encryptedWalletFileURI, ContentResolver contentResolver, CryptographyService cryptographyService) {
+        coreUserAccountXMLDAO = new ro.eu.passwallet.model.dao.UserAccountXMLDAO(new XMLFileService(encryptedWalletFileURI, contentResolver, cryptographyService), new LoggerService(TAG));
         userAccounts = new ArrayList<>(coreUserAccountXMLDAO.findAllUsersAccounts());
     }
 

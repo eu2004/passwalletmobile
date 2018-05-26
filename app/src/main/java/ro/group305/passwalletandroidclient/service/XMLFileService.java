@@ -1,4 +1,4 @@
-package ro.group305.passwalletandroidclient.model;
+package ro.group305.passwalletandroidclient.service;
 
 import android.content.ContentResolver;
 import android.net.Uri;

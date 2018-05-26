@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import ro.eu.passwallet.model.UserAccount;
-import ro.group305.passwalletandroidclient.model.UserAccountXMLFileDAO;
+import ro.group305.passwalletandroidclient.model.UserAccountXmlUriDAO;
 
 class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
@@ -47,7 +47,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
     private ArrayList<Map<String, String>> originalValues;
     private ArrayFilter filter;
     private String[] attributesToDisplay;
-    private UserAccountXMLFileDAO userAccountDAO;
+    private UserAccountXmlUriDAO userAccountDAO;
     private final Comparator nickNameComparator = new Comparator<UserAccount>() {
         @Override
         public int compare(UserAccount o1, UserAccount o2) {
@@ -56,7 +56,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
     };
 
     public UserAccountsListAdapter(@NonNull Context context, @LayoutRes int resource,
-                                   @IdRes int textViewResourceId, @NonNull UserAccountXMLFileDAO userAccountDAO,
+                                   @IdRes int textViewResourceId, @NonNull UserAccountXmlUriDAO userAccountDAO,
                                    @NonNull String[] attributeToDisplay) {
         this.context = context;
         inflater = LayoutInflater.from(context);

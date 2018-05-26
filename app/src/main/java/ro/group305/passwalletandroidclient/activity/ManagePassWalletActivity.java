@@ -19,14 +19,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 import ro.eu.passwallet.model.UserAccount;
 import ro.eu.passwallet.service.crypt.CryptographyService;
 import ro.group305.passwalletandroidclient.R;
-import ro.group305.passwalletandroidclient.model.UserAccountXMLFileDAO;
+import ro.group305.passwalletandroidclient.model.UserAccountXmlUriDAO;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 
 public class ManagePassWalletActivity extends AppCompatActivity {
@@ -35,7 +33,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     private static final int ADD_ITEM_ACTION_RESULT = 1;
     private static final int VIEW_ITEM_ACTION_RESULT = 2;
 
-    private UserAccountXMLFileDAO userAccountDAO;
+    private UserAccountXmlUriDAO userAccountDAO;
     private CryptographyService cryptographyService;
     private UserAccountsListAdapter userAccountsAdapter;
     private Uri encryptedWalletFileURI;
@@ -50,7 +48,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             encryptedWalletFileURI = Uri.parse(intent.getStringExtra("encryptedWalletFileURI"));
             String key = new String(intent.getByteArrayExtra("key"));
             cryptographyService = new CryptographyService(key);
-            userAccountDAO = new UserAccountXMLFileDAO(encryptedWalletFileURI, getContentResolver(), cryptographyService);
+            userAccountDAO = new UserAccountXmlUriDAO(encryptedWalletFileURI, getContentResolver(), cryptographyService);
             createSearchView();
             createAddButton();
             initAccountsCount();
