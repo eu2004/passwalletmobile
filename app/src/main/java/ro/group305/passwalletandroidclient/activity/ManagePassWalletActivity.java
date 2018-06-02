@@ -84,6 +84,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.list_view) {
             menu.add("Copy");
+            menu.add("Copy Password");
             menu.add("View");
             menu.add("Edit");
             menu.add("Delete");
@@ -101,7 +102,11 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         if ("Copy".equals(item.getTitle())) {
             Log.d(TAG, "Copy " + userAccount.getNickName());
             copyInfoToClipboard(userAccount);
-        } else if ("View".equals(item.getTitle())) {
+        }else if ("Copy Password".equals(item.getTitle())) {
+            Log.d(TAG, "Copy Password " + userAccount.getNickName());
+            copyPasswordToClipboard(userAccount);
+        }
+        else if ("View".equals(item.getTitle())) {
             Log.d(TAG, "View ...");
             viewUserAccount(userAccount);
         }else if ("Edit".equals(item.getTitle())) {
@@ -191,6 +196,12 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EditPassWalletItemActivity.class);
         intent.putExtra("selectedUserAccount", userAccount);
         startActivityForResult(intent, EDIT_ITEM_ACTION_RESULT);
+    }
+
+    private void copyPasswordToClipboard(UserAccount userAccount) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("key", userAccount.getPassword());
+        clipboard.setPrimaryClip(clip);
     }
 
     private void copyInfoToClipboard(UserAccount userAccount) {
