@@ -1,5 +1,24 @@
 <resources>
     <string name="app_name">PassWallet 2.0.2</string>
     <string name="search_hint">Search For User Accounts</string>
-    <string name="createPassWalletFile"><a href="#">New PassWallet</a></string>
+    <string name="createPassWalletFile"><a href="#">Create PassWallet</a></string>
+    <string name="importNotEncryptedPassWalletFile"><a href="#">Import Not Encrypted PassWallet</a></string>
+    <string name="createEmptyNotEncryptedPassWalletFile"><a href="#">Create empty not encrypted passwallet</a></string>
+    <string name="howToImportNotEncryptedPassWalletFile"><a href="#">How to import ...</a></string>
+
+    <string name="emptyNotEncryptedPassWalletFileInfo">In order to import your confidential data to a secured (encrypted) passwallet
+        you need to create a xml file with you preferred xml editor or just generate an empty one using the \"Create empty not encrypted passwallet\" link.
+        The plain passwallet xml file structure is at below:\n
+        &lt;USERSACCOUNTS>\n
+        \t&lt;userAccount>\n
+        \t\t&lt;description>description_1508524059202&lt;/description>\n
+        \t\t&lt;id>1&lt;/id>\n
+        \t\t&lt;name>name_1508524059202&lt;/name>\n
+        \t\t&lt;nickName>nickname_1508524059202&lt;/nickName>\n
+        \t\t&lt;password>pass_1508524059202&lt;/password>\n
+        \t\t&lt;siteURL>siteurl_1508524059202&lt;/siteURL>\n
+        \t&lt;/userAccount>\n
+        ...
+        &lt;/USERSACCOUNTS>\n
+        </string>
 </resources>

@@ -75,6 +75,18 @@
             android:text="@string/createPassWalletFile"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
+        <TextView
+            android:id="@+id/import_passwallet_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:autoLink="web"
+            android:gravity="left"
+            android:text="@string/importNotEncryptedPassWalletFile"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
 
     </LinearLayout>
 

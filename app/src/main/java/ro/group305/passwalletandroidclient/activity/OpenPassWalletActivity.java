@@ -32,10 +32,9 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         selectedPassWalletName = findViewById(R.id.selected_wallet_name_textView);
 
         createBrowsePasswalletButton();
-
         createOpenSelectedPasswalletButton();
-
         createCreateNewPasswalletLink();
+        createImportPasswalletLink();
 
         initSelectedWalletURI();
     }
@@ -47,6 +46,18 @@ public class OpenPassWalletActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "Create new passwallet");
                 Intent intent = new Intent(OpenPassWalletActivity.this, CreatePassWalletActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void createImportPasswalletLink() {
+        TextView createNewPasswalletTextView = findViewById(R.id.import_passwallet_textview);
+        createNewPasswalletTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Import passwallet");
+                Intent intent = new Intent(OpenPassWalletActivity.this, ImportPassWalletActivity.class);
                 startActivity(intent);
             }
         });

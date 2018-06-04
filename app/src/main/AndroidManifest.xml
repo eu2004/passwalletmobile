@@ -36,6 +36,14 @@
             android:parentActivityName=".activity.OpenPassWalletActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activity.ImportPassWalletActivity"
+            android:parentActivityName=".activity.ImportPassWalletActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.HowToImportPasswalletActivity"
+            android:parentActivityName=".activity.ImportPassWalletActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.EditPassWalletItemActivity"
             android:screenOrientation="portrait" />
         <activity
