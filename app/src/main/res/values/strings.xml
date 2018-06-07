@@ -1,10 +1,44 @@
 <resources>
-    <string name="app_name">PassWallet 2.0.2</string>
+    <string name="app_name">Secured PassWallet</string>
+    <string name="version">2.1</string>
+
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="confirmDeletePasswalletItem">Are you sure to delete this entry?</string>
+
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="view">View</string>
+    <string name="copy">Copy</string>
+    <string name="copyKey">Copy Key</string>
+
+    <string name="enterPasswordLabel">Enter Key:</string>
+    <string name="createPasswalletTitle">Create PassWallet</string>
+    <string name="create">Create</string>
+    <string name="createAccountTitle">Create Account</string>
+
+    <string name="save">Save</string>
+    <string name="descriptionLabel">Description:</string>
+    <string name="siteLabel">Site:</string>
+    <string name="passwordLabel">Key:</string>
+    <string name="nameLabel">Name:</string>
+    <string name="nickNameLabel">Nick name:</string>
+    <string name="editAccountTitle">Edit Account</string>
+
+    <string name="unlockPasswalletTitle">Unlock PassWallet</string>
+    <string name="browsePasswallet">Browse</string>
+    <string name="openPasswallet">Unlock</string>
+    <string name="addPasswalletItem">Add</string>
+    <string name="totalPasswalletItemsLabel">Total:</string>
+    <string name="createPasswordForNotEncryptedPasswalletLabel">Create Key For Not Encrypted Passwallet:</string>
+    <string name="importPasswalletButton">Import</string>
+
     <string name="search_hint">Search For User Accounts</string>
-    <string name="createPassWalletFile"><a href="#">Create PassWallet</a></string>
+    <string name="createPassWalletFileLink"><a href="#">Create PassWallet</a></string>
     <string name="importNotEncryptedPassWalletFile"><a href="#">Import Not Encrypted PassWallet</a></string>
     <string name="createEmptyNotEncryptedPassWalletFile"><a href="#">Create empty not encrypted passwallet</a></string>
-    <string name="howToImportNotEncryptedPassWalletFile"><a href="#">How to import ...</a></string>
+    <string name="howToImportNotEncryptedPassWalletFileLink"><a href="#">How to import ...</a></string>
+    <string name="howToImportNotEncryptedPassWalletFileTitle">How To Import Not Encrypted PassWallet</string>
 
     <string name="emptyNotEncryptedPassWalletFileInfo">In order to import your confidential data to a secured (encrypted) passwallet
         you need to create a xml file with you preferred xml editor or just generate an empty one using the \"Create empty not encrypted passwallet\" link.

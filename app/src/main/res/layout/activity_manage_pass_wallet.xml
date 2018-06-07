@@ -34,14 +34,14 @@
                 android:id="@+id/create_passwallet_item_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add" />
+                android:text="@string/addPasswalletItem" />
 
             <TextView
                 android:id="@+id/accounts_count_label_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="190dp"
-                android:text="Total:" />
+                android:text="@string/totalPasswalletItemsLabel" />
 
             <TextView
                 android:id="@+id/accounts_count_textView"

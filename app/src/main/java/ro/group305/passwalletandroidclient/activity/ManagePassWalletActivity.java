@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -83,11 +84,12 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.list_view) {
-            menu.add("Copy");
-            menu.add("Copy Password");
-            menu.add("View");
-            menu.add("Edit");
-            menu.add("Delete");
+            Resources res = getResources();
+            menu.add(res.getString(R.string.copy));
+            menu.add(res.getString(R.string.copyKey));
+            menu.add(res.getString(R.string.view));
+            menu.add(res.getString(R.string.edit));
+            menu.add(res.getString(R.string.delete));
         }
         super.onCreateContextMenu(menu, v, menuInfo);
     }
@@ -98,26 +100,23 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.list_view);
         Map<String, String> selectedItem = (Map<String, String>) listView.getItemAtPosition(menuInfo.position);
         UserAccount userAccount = userAccountDAO.findUserAccountById(Integer.parseInt(selectedItem.get("id")));
-
-        if ("Copy".equals(item.getTitle())) {
+        Resources res = getResources();
+        if (res.getString(R.string.copy).equals(item.getTitle())) {
             Log.d(TAG, "Copy " + userAccount.getNickName());
             copyInfoToClipboard(userAccount);
-        }else if ("Copy Password".equals(item.getTitle())) {
+        }else if (res.getString(R.string.copyKey).equals(item.getTitle())) {
             Log.d(TAG, "Copy Password " + userAccount.getNickName());
             copyPasswordToClipboard(userAccount);
         }
-        else if ("View".equals(item.getTitle())) {
+        else if (res.getString(R.string.view).equals(item.getTitle())) {
             Log.d(TAG, "View ...");
             viewUserAccount(userAccount);
-        }else if ("Edit".equals(item.getTitle())) {
+        }else if (res.getString(R.string.edit).equals(item.getTitle())) {
             Log.d(TAG, "Edit " + userAccount.getNickName());
             editUserAccount(userAccount);
-        } else if ("Delete".equals(item.getTitle())) {
+        } else if (res.getString(R.string.delete).equals(item.getTitle())) {
             Log.d(TAG, "Delete " + userAccount.getNickName());
             deleteUserAccount(userAccount);
-        } else if ("Add New".equals(item.getTitle())) {
-            Log.d(TAG, "Add New ...");
-            addUserAccount();
         }
 
         return super.onContextItemSelected(item);
@@ -164,8 +163,8 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure to delete this entry?").setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
+        builder.setMessage(getResources().getString(R.string.confirmDeletePasswalletItem)).setPositiveButton(getResources().getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(getResources().getString(R.string.no), dialogClickListener).show();
     }
 
     private void onAddItemActionResult(int resultCode, Intent data) {

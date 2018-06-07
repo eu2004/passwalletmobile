@@ -18,7 +18,7 @@
             android:layout_marginBottom="50dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="10dp"
-            android:text="Create PassWallet" />
+            android:text="@string/createPasswalletTitle" />
 
         <TextView
             android:id="@+id/textView"
@@ -26,7 +26,7 @@
             android:layout_height="20dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="20dp"
-            android:text="Enter Password:"
+            android:text="@string/enterPasswordLabel"
             app:layout_constraintEnd_toStartOf="@+id/walletKey" />
 
         <EditText
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="20dp"
-            android:text="Create" />
+            android:text="@string/create" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

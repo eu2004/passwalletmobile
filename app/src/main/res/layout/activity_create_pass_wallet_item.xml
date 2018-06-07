@@ -23,7 +23,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"
-                    android:text="Create Account" />
+                    android:text="@string/createAccountTitle" />
 
             </LinearLayout>
         </TableRow>
@@ -42,7 +42,7 @@
                     android:layout_width="116dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="Nick name:" />
+                    android:text="@string/nickNameLabel" />
 
                 <EditText
                     android:id="@+id/nick_name_EditText"
@@ -67,7 +67,7 @@
                     android:layout_width="116dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="Name:" />
+                    android:text="@string/nameLabel" />
 
                 <EditText
                     android:id="@+id/name_EditText"
@@ -92,7 +92,7 @@
                     android:layout_width="116dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="Password:" />
+                    android:text="@string/passwordLabel" />
 
                 <EditText
                     android:id="@+id/password_EditText"
@@ -118,7 +118,7 @@
                     android:layout_width="116dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="Site:" />
+                    android:text="@string/siteLabel" />
 
                 <EditText
                     android:id="@+id/site_EditText"
@@ -143,7 +143,7 @@
                     android:layout_width="116dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="Description:" />
+                    android:text="@string/descriptionLabel" />
 
                 <EditText
                     android:id="@+id/description_EditText"
@@ -169,7 +169,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="20dp"
-                    android:text="Create" />
+                    android:text="@string/create" />
             </LinearLayout>
         </TableRow>
     </TableLayout>
