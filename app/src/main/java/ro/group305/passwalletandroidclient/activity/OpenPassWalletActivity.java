@@ -72,8 +72,17 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     }
 
     private void setSelectedPassWalletNameLabel() {
-        Cursor returnCursor =
-                getContentResolver().query(selectedPassWalletURI, null, null, null, null);
+        Cursor returnCursor;
+        try {
+            returnCursor =
+                    getContentResolver().query(selectedPassWalletURI, null, null, null, null);
+        }catch (java.lang.SecurityException ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+
+            Log.w(TAG, selectedPassWalletURI + " cannot be accessed. Try to load a different one.");
+            return;
+        }
+
         int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
         if (nameIndex > -1) {
             returnCursor.moveToFirst();
