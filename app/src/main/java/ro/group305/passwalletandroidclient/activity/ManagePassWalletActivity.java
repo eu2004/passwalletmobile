@@ -9,8 +9,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -137,7 +137,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         }
     }
 
-    private void deleteUserAccount(UserAccount userAccount) {
+    private void deleteUserAccount(final UserAccount userAccount) {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
