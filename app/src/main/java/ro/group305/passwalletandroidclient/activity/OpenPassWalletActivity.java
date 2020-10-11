@@ -50,6 +50,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     private TextView selectedPassWalletName;
     private KeyPreference keyPreference;
     private CryptoHelper cryptoHelper;
+    private boolean biometricFeatureActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         switch (biometricManager.canAuthenticate()) {
             case BiometricManager.BIOMETRIC_SUCCESS:
                 Log.i(TAG, "App can authenticate using biometrics.");
+                biometricFeatureActive = true;
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
                 Log.e(TAG, "No biometric features available on this device.");
@@ -259,6 +261,13 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
         Button openSelectedPasswalletButton = findViewById(R.id.open_passwallet_fingerprint_button);
         openSelectedPasswalletButton.setOnClickListener(v -> {
+            if (!biometricFeatureActive) {
+                Toast.makeText(getApplicationContext(), "Biometric feature not available on this device!",
+                        Toast.LENGTH_LONG)
+                        .show();
+                return;
+            }
+
             if (selectedPassWalletURI == null) {
                 Toast.makeText(getApplicationContext(), "Passwallet file not selected! Please browse to a valid one first.",
                         Toast.LENGTH_LONG)
@@ -274,6 +283,13 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         });
 
         openSelectedPasswalletButton.setOnLongClickListener(v -> {
+            if (!biometricFeatureActive) {
+                Toast.makeText(getApplicationContext(), "Biometric feature not available on this device!",
+                        Toast.LENGTH_LONG)
+                        .show();
+                return false;
+            }
+
             if (selectedPassWalletURI == null) {
                 Toast.makeText(getApplicationContext(), "Passwallet file not selected! Please browse to a valid one first.",
                         Toast.LENGTH_LONG)
