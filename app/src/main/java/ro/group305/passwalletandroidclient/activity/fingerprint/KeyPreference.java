@@ -56,7 +56,7 @@ public class KeyPreference {
         editor.apply();
     }
 
-    public static byte[] getCombinedArray(byte[] firstArray, byte[] secondArray) {
+    private static byte[] getCombinedArray(byte[] firstArray, byte[] secondArray) {
         byte[] result = new byte[firstArray.length + secondArray.length];
         System.arraycopy(firstArray, 0, result, 0, firstArray.length);
         System.arraycopy(secondArray, 0, result, firstArray.length, secondArray.length);
