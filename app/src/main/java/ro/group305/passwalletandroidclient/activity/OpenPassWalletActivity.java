@@ -3,43 +3,32 @@ package ro.group305.passwalletandroidclient.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
-import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.util.Arrays;
 import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,6 +37,8 @@ import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import ro.eu.passwallet.service.crypt.CryptographyService;
 import ro.group305.passwalletandroidclient.R;
+import ro.group305.passwalletandroidclient.activity.fingerprint.CryptoHelper;
+import ro.group305.passwalletandroidclient.activity.fingerprint.KeyPreference;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 import ro.group305.passwalletandroidclient.utils.UriUtils;
 
@@ -57,6 +48,8 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     private static final int READ_REQUEST_CODE = 42;
     private Uri selectedPassWalletURI;
     private TextView selectedPassWalletName;
+    private KeyPreference keyPreference;
+    private CryptoHelper cryptoHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +95,22 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                 .setNegativeButtonText("Use account password")
                 .build();
 
-        Cipher cipher = getCipher(getSecretKey());
+        Cipher cipher = getCryptoHelper().getCipher(cryptoHelper.getSecretKey());
         biometricPrompt.authenticate(promptInfo, new BiometricPrompt.CryptoObject(cipher));
+    }
+
+    private KeyPreference getKeyPreference() {
+        if (keyPreference == null) {
+            keyPreference = new KeyPreference(OpenPassWalletActivity.this.getPreferences(Context.MODE_PRIVATE), selectedPassWalletURI.getPath());
+        }
+        return keyPreference;
+    }
+
+    private CryptoHelper getCryptoHelper() {
+        if (cryptoHelper == null) {
+            cryptoHelper = new CryptoHelper(getKeyPreference());
+        }
+        return cryptoHelper;
     }
 
     private BiometricPrompt createBiometricPrompt() {
@@ -155,7 +162,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     }
 
     private byte[] getPasswordForFingerPrint(Cipher cipher) throws BadPaddingException, IllegalBlockSizeException {
-        String keyFromPrefs = getKeyFromPrefs();
+        String keyFromPrefs = getKeyPreference().getKeyFromPrefs();
         if (keyFromPrefs.length() == 0) {
             EditText password = findViewById(R.id.walletKey);
             boolean succeeded = registerPasswordForFingerPrint(cipher, password.getText().toString());
@@ -165,7 +172,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
             return password.getText().toString().getBytes(StandardCharsets.UTF_8);
         } else {
             //decrypt pass
-            return cipher.doFinal(getKeyEncryptedPassFromPrefs());
+            return cipher.doFinal(getKeyPreference().getKeyEncryptedPassFromPrefs());
         }
     }
 
@@ -186,123 +193,13 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         }
 
         //save encrypted pass
-        savePassToPrefs(encryptCipher, password.getBytes(StandardCharsets.UTF_8));
+        getKeyPreference().savePassToPrefs(encryptCipher, password.getBytes(StandardCharsets.UTF_8));
         return true;
     }
 
-    /**
-     * Only for debugging purposes.
-     */
     private boolean resetKey() {
-        try {
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
-            keyStore.deleteEntry(selectedPassWalletURI.getPath());
-        }catch (Exception ex) {
-            Log.e(TAG, ex.getMessage(), ex);
-            return false;
-        }
-
-        SharedPreferences sharedPref = OpenPassWalletActivity.this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(selectedPassWalletURI.getPath(), "");
-        editor.apply();
-        return true;
+        return getCryptoHelper().resetKey() && getKeyPreference().resetKey();
     }
-
-    private String getKeyFromPrefs() {
-        SharedPreferences sharedPref = OpenPassWalletActivity.this.getPreferences(Context.MODE_PRIVATE);
-        return sharedPref.getString(selectedPassWalletURI.getPath(), "");
-    }
-
-    private byte[] getKeyEncryptedPassFromPrefs() {
-        SharedPreferences sharedPref = OpenPassWalletActivity.this.getPreferences(Context.MODE_PRIVATE);
-        String encryptedPassword = sharedPref.getString(selectedPassWalletURI.getPath(), "");
-        byte[] ivAndCipherText = Base64.decode(encryptedPassword, Base64.NO_WRAP);
-        return Arrays.copyOfRange(ivAndCipherText, 16, ivAndCipherText.length);
-    }
-
-    private byte[] getKeyIvParameterFromPrefs() {
-        String keyFromPrefs = getKeyFromPrefs();
-        byte[] ivAndCipherText = Base64.decode(keyFromPrefs, Base64.NO_WRAP);
-        return Arrays.copyOfRange(ivAndCipherText, 0, 16);
-    }
-
-    private void savePassToPrefs(Cipher encryptCipher, byte[] password) throws BadPaddingException, IllegalBlockSizeException {
-        SharedPreferences sharedPref = OpenPassWalletActivity.this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        byte[] cipherText = encryptCipher.doFinal(password);
-        byte[] iv = encryptCipher.getIV();
-        byte[] ivAndCipherText = getCombinedArray(iv, cipherText);
-        editor.putString(selectedPassWalletURI.getPath(), Base64.encodeToString(ivAndCipherText, Base64.NO_WRAP));
-        editor.apply();
-    }
-
-    private static byte[] getCombinedArray(byte[] firstArray, byte[] secondArray) {
-        byte[] result = new byte[firstArray.length + secondArray.length];
-        System.arraycopy(firstArray, 0, result, 0, firstArray.length);
-        System.arraycopy(secondArray, 0, result, firstArray.length, secondArray.length);
-        return result;
-    }
-
-    private Cipher getCipher(SecretKey secretKey) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException {
-        String encryptedPassword = getKeyFromPrefs();
-        int encryptMode = Cipher.DECRYPT_MODE;
-        if (encryptedPassword.length() == 0) {
-            encryptMode = Cipher.ENCRYPT_MODE;
-        }
-
-        return getCipher(encryptMode, secretKey);
-    }
-
-    private Cipher getCipher(int encryptMode, SecretKey secretKey) throws NoSuchPaddingException,
-            NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException {
-        Cipher cipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
-                + KeyProperties.BLOCK_MODE_CBC + "/"
-                + KeyProperties.ENCRYPTION_PADDING_PKCS7);
-        if (Cipher.DECRYPT_MODE == encryptMode) {
-            cipher.init(encryptMode, secretKey, new IvParameterSpec(getKeyIvParameterFromPrefs()));
-        } else {
-            cipher.init(encryptMode, secretKey);
-        }
-
-        return cipher;
-    }
-
-    private SecretKey getSecretKey() throws KeyStoreException,
-            CertificateException, NoSuchAlgorithmException,
-            IOException, UnrecoverableKeyException,
-            NoSuchProviderException,
-            InvalidAlgorithmParameterException {
-        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-        keyStore.load(null);
-
-        SecretKey secretKey;
-
-        if (!keyStore.containsAlias(selectedPassWalletURI.getPath())) {
-            secretKey = generateSecretKey();
-        } else {
-            secretKey = ((SecretKey) keyStore.getKey(selectedPassWalletURI.getPath(), null));
-        }
-        return secretKey;
-    }
-
-    private SecretKey generateSecretKey() throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance(
-                KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
-
-        keyGenerator.init(new KeyGenParameterSpec.Builder(
-                Objects.requireNonNull(selectedPassWalletURI.getPath()),
-                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                .setUserAuthenticationRequired(true)
-                .setInvalidatedByBiometricEnrollment(true)
-                .build());
-
-        return keyGenerator.generateKey();
-    }
-
 
     private void createCreateNewPasswalletLink() {
         TextView createNewPasswalletTextView = findViewById(R.id.create_new_passwallet_textview);
@@ -352,6 +249,9 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         } else {
             selectedPassWalletName.setText(" [" + selectedPassWalletURI.getPath() + "]");
         }
+
+        keyPreference = null;
+        cryptoHelper = null;
     }
 
     private void creatOpenPasswalletFingerprintButton() {
@@ -359,25 +259,39 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
         Button openSelectedPasswalletButton = findViewById(R.id.open_passwallet_fingerprint_button);
         openSelectedPasswalletButton.setOnClickListener(v -> {
+            if (selectedPassWalletURI == null) {
+                Toast.makeText(getApplicationContext(), "Passwallet file not selected! Please browse to a valid one first.",
+                        Toast.LENGTH_LONG)
+                        .show();
+                return;
+            }
+
             try {
                 promptBiometricFingerprint();
             } catch (GeneralSecurityException | IOException ex) {
                 Log.e(TAG, ex.getMessage(), ex);
             }
         });
+
         openSelectedPasswalletButton.setOnLongClickListener(v -> {
+            if (selectedPassWalletURI == null) {
+                Toast.makeText(getApplicationContext(), "Passwallet file not selected! Please browse to a valid one first.",
+                        Toast.LENGTH_LONG)
+                        .show();
+                return false;
+            }
+
             boolean result = resetKey();
             if (result) {
                 Toast.makeText(getApplicationContext(), "Finger print authentication reset!" +
                                 "To enable it again, please fill-in the password field and authenticate again.",
                         Toast.LENGTH_LONG)
                         .show();
-            }else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Finger print authentication failed to reset! Please try again or check the logs.",
                         Toast.LENGTH_LONG)
                         .show();
             }
-
             return result;
         });
     }
