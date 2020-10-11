@@ -56,12 +56,23 @@
                 android:ems="12"
                 android:inputType="textPassword" />
         </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginTop="30dp" android:layout_marginStart="5dp">
         <Button
             android:id="@+id/open_passwallet_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:text="@string/openPasswallet" />
+        <Button
+            android:id="@+id/open_passwallet_fingerprint_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="@string/openFingerprintPasswallet" />
+    </LinearLayout>
 
         <TextView
             android:id="@+id/create_new_passwallet_textview"

@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Map;
+import java.util.Objects;
 
 import ro.eu.passwallet.model.UserAccount;
 import ro.eu.passwallet.service.crypt.CryptographyService;
@@ -57,6 +58,8 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             Log.e(TAG, exception.getMessage(), exception);
             ActivityUtils.displayErrorMessage(this, "Error loading PassWallet", exception.getMessage());
             finish();
+        }finally {
+            getIntent().removeExtra("key");
         }
     }
 
@@ -99,22 +102,22 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         ListView listView = findViewById(R.id.list_view);
         Map<String, String> selectedItem = (Map<String, String>) listView.getItemAtPosition(menuInfo.position);
-        UserAccount userAccount = userAccountDAO.findUserAccountById(Integer.parseInt(selectedItem.get("id")));
+        UserAccount userAccount = userAccountDAO.findUserAccountById(Integer.parseInt(Objects.requireNonNull(selectedItem.get("id"))));
         Resources res = getResources();
-        if (res.getString(R.string.copy).equals(item.getTitle())) {
+        if (res.getString(R.string.copy).contentEquals(item.getTitle())) {
             Log.d(TAG, "Copy " + userAccount.getNickName());
             copyInfoToClipboard(userAccount);
-        }else if (res.getString(R.string.copyKey).equals(item.getTitle())) {
+        }else if (res.getString(R.string.copyKey).contentEquals(item.getTitle())) {
             Log.d(TAG, "Copy Password " + userAccount.getNickName());
             copyPasswordToClipboard(userAccount);
         }
-        else if (res.getString(R.string.view).equals(item.getTitle())) {
+        else if (res.getString(R.string.view).contentEquals(item.getTitle())) {
             Log.d(TAG, "View ...");
             viewUserAccount(userAccount);
-        }else if (res.getString(R.string.edit).equals(item.getTitle())) {
+        }else if (res.getString(R.string.edit).contentEquals(item.getTitle())) {
             Log.d(TAG, "Edit " + userAccount.getNickName());
             editUserAccount(userAccount);
-        } else if (res.getString(R.string.delete).equals(item.getTitle())) {
+        } else if (res.getString(R.string.delete).contentEquals(item.getTitle())) {
             Log.d(TAG, "Delete " + userAccount.getNickName());
             deleteUserAccount(userAccount);
         }
@@ -138,27 +141,24 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     }
 
     private void deleteUserAccount(final UserAccount userAccount) {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        try {
-                            boolean deleted = userAccountDAO.deleteUserAccountById(userAccount.getId());
-                            if (deleted) {
-                                userAccountsAdapter.updateUserAccountsList();
-                                initAccountsCount();
-                            }
-                        } catch (Exception exception) {
-                            Log.e(TAG, exception.getMessage(), exception);
-                            ActivityUtils.displayErrorMessage(ManagePassWalletActivity.this, "Error creating passwallet item", exception.getMessage());
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    try {
+                        boolean deleted = userAccountDAO.deleteUserAccountById(userAccount.getId());
+                        if (deleted) {
+                            userAccountsAdapter.updateUserAccountsList();
+                            initAccountsCount();
                         }
-                        break;
+                    } catch (Exception exception) {
+                        Log.e(TAG, exception.getMessage(), exception);
+                        ActivityUtils.displayErrorMessage(ManagePassWalletActivity.this, "Error creating passwallet item", exception.getMessage());
+                    }
+                    break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
-                        break;
-                }
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
             }
         };
 
@@ -211,13 +211,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
 
     private void createAddButton() {
         Button addButton = findViewById(R.id.create_passwallet_item_button);
-        addButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                ManagePassWalletActivity.this.addUserAccount();
-            }
-        });
+        addButton.setOnClickListener(v -> ManagePassWalletActivity.this.addUserAccount());
     }
 
     private void createSearchView() {
