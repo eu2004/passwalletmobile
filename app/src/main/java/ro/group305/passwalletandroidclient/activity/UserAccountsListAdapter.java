@@ -2,10 +2,10 @@ package ro.group305.passwalletandroidclient.activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -220,8 +220,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
             }
 
             if (prefix == null || prefix.length() == 0) {
-                final ArrayList<Map<String, ?>> list;
-                list = new ArrayList<>(originalValues);
+                final ArrayList<Map<String, ?>> list = new ArrayList<Map<String, ?>>(originalValues);
                 results.values = list;
                 results.count = list.size();
             } else {

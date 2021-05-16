@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Secured PassWallet</string>
-    <string name="version">2.2</string>
+    <string name="app_name">Easy Secured PassWallet</string>
+    <string name="version">3.0</string>
 
     <string name="no">No</string>
     <string name="yes">Yes</string>
@@ -28,6 +28,7 @@
     <string name="unlockPasswalletTitle">Unlock PassWallet</string>
     <string name="browsePasswallet">Browse</string>
     <string name="openPasswallet">Unlock</string>
+    <string name="openFingerprintPasswallet">With finger print</string>
     <string name="addPasswalletItem">Add</string>
     <string name="totalPasswalletItemsLabel">Total:</string>
     <string name="createPasswordForNotEncryptedPasswalletLabel">Create Key For Not Encrypted Passwallet:</string>
