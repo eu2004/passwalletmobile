@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="passwalletmobile/app" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/passwalletmobile.iml" filepath="$PROJECT_DIR$/.idea/modules/passwalletmobile.iml" group="passwalletmobile" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/passwalletmobile.iml" filepath="$PROJECT_DIR$/.idea/modules/passwalletmobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/passwalletmobile.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/passwalletmobile.app.iml" />
     </modules>
   </component>
 </project>
