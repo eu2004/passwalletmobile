@@ -105,20 +105,20 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         UserAccount userAccount = userAccountDAO.findUserAccountById(Integer.parseInt(Objects.requireNonNull(selectedItem.get("id"))));
         Resources res = getResources();
         if (res.getString(R.string.copy).contentEquals(item.getTitle())) {
-            Log.d(TAG, "Copy " + userAccount.getNickName());
+            Log.d(TAG, userAccount.getNickName());
             copyInfoToClipboard(userAccount);
         }else if (res.getString(R.string.copyKey).contentEquals(item.getTitle())) {
-            Log.d(TAG, "Copy Password " + userAccount.getNickName());
+            Log.d(TAG, userAccount.getNickName());
             copyPasswordToClipboard(userAccount);
         }
         else if (res.getString(R.string.view).contentEquals(item.getTitle())) {
             Log.d(TAG, "View ...");
             viewUserAccount(userAccount);
         }else if (res.getString(R.string.edit).contentEquals(item.getTitle())) {
-            Log.d(TAG, "Edit " + userAccount.getNickName());
+            Log.d(TAG, userAccount.getNickName());
             editUserAccount(userAccount);
         } else if (res.getString(R.string.delete).contentEquals(item.getTitle())) {
-            Log.d(TAG, "Delete " + userAccount.getNickName());
+            Log.d(TAG, userAccount.getNickName());
             deleteUserAccount(userAccount);
         }
 

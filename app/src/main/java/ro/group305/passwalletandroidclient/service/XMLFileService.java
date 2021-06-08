@@ -14,7 +14,7 @@ import ro.eu.passwallet.service.crypt.CryptographyService;
 import ro.eu.passwallet.service.xml.IXMLFileService;
 import ro.group305.passwalletandroidclient.utils.UriUtils;
 
-public class XMLFileService implements IXMLFileService {
+public class XMLFileService implements IXMLFileService<UserAccount> {
     private static final String TAG = "PassWallet";
     private Uri encryptedWalletFileURI;
     private ContentResolver contentResolver;
@@ -49,7 +49,7 @@ public class XMLFileService implements IXMLFileService {
     }
 
     @Override
-    public Collection<UserAccount> getAllUsersAccountsFromXML() {
+    public Collection<UserAccount> getAllObjectsFromXMLFile() {
         try {
             byte[] decryptedWalletFile = cryptographyService.decrypt(UriUtils.getUriContent(this.encryptedWalletFileURI, this.contentResolver));
             return Collections.synchronizedList(new ArrayList<>(userAccountXMLSerializer.unmarshal(decryptedWalletFile)));

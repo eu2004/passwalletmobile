@@ -44,13 +44,13 @@ public class CreatePassWalletActivity extends AppCompatActivity {
                             UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), encryptedDefaultPasswalletContent);
                         } catch (IOException e) {
                             Log.e(TAG, e.getMessage(), e);
-                            ActivityUtils.displayErrorMessage(this, "Fatal Error", "Error saving passwallet file:" + e.getMessage());
+                            ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
                             return;
                         }
                         ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
                         startManagePassWalletActivity(selectedWalletURI);
                     } else {
-                        Log.e(TAG, "Data is null, resultCode " + resultCode);
+                        Log.e(TAG, String.valueOf(resultCode));
                     }
                 }
                 break;

@@ -11,6 +11,14 @@ public class ActivityUtils {
     private ActivityUtils(){
     }
 
+    public static String appendStrings(String ... args) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String arg : args) {
+            stringBuilder.append(arg);
+        }
+        return stringBuilder.toString();
+    }
+
     public static void displayErrorMessage(Activity activity, String title, String message) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity).create();
         alertDialog.setTitle(title);

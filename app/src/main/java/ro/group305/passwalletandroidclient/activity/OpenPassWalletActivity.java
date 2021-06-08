@@ -134,7 +134,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                     }
                 } catch (GeneralSecurityException e) {
                     Log.e(TAG, e.getMessage(), e);
-                    Toast.makeText(getApplicationContext(), "Authentication failed! Message: " + e.getMessage(),
+                    Toast.makeText(getApplicationContext(), e.getMessage(),
                             Toast.LENGTH_LONG)
                             .show();
                     return;
@@ -157,7 +157,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                                               @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
                 Toast.makeText(getApplicationContext(),
-                        "Authentication error: " + errString, Toast.LENGTH_LONG)
+                        errString, Toast.LENGTH_LONG)
                         .show();
             }
         });
@@ -236,8 +236,6 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                     getContentResolver().query(selectedPassWalletURI, null, null, null, null);
         } catch (java.lang.SecurityException ex) {
             Log.e(TAG, ex.getMessage(), ex);
-
-            Log.w(TAG, selectedPassWalletURI + " cannot be accessed. Try to load a different one.");
             return;
         }
 
@@ -246,10 +244,10 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         if (nameIndex > -1) {
             returnCursor.moveToFirst();
             String name = returnCursor.getString(nameIndex);
-            selectedPassWalletName.setText(name + " [" + selectedPassWalletURI.getPath() + "]");
+            selectedPassWalletName.setText(ActivityUtils.appendStrings(name, " [", selectedPassWalletURI.getPath(), "]"));
             returnCursor.close();
         } else {
-            selectedPassWalletName.setText(" [" + selectedPassWalletURI.getPath() + "]");
+            selectedPassWalletName.setText(ActivityUtils.appendStrings(" [", selectedPassWalletURI.getPath(), "]"));
         }
 
         keyPreference = null;
@@ -369,11 +367,11 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                 if (data != null) {
                     selectedPassWalletURI = data.getData();
                     assert selectedPassWalletURI != null;
-                    Log.i(TAG, "Uri: " + selectedPassWalletURI.toString());
+                    Log.i(TAG, selectedPassWalletURI.toString());
                     ActivityUtils.saveSelectedFileToPreferences(this, selectedPassWalletURI);
                     setSelectedPassWalletNameLabel();
                 } else {
-                    Log.e(TAG, "Data is null, resultCode " + resultCode);
+                    Log.e(TAG, ActivityUtils.appendStrings("Data is null, resultCode ", String.valueOf(resultCode)));
                 }
             }
         }

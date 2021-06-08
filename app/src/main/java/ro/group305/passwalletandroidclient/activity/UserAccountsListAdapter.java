@@ -122,10 +122,12 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
                 //  Otherwise, find the TextView field within the layout
                 text = view.findViewById(fieldId);
 
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Failed to find view with ID ");
+                stringBuilder.append(context.getResources().getResourceName(fieldId));
+                stringBuilder.append(" in item layout");
                 if (text == null) {
-                    throw new RuntimeException("Failed to find view with ID "
-                            + context.getResources().getResourceName(fieldId)
-                            + " in item layout");
+                    throw new RuntimeException(stringBuilder.toString());
                 }
             }
         } catch (ClassCastException e) {

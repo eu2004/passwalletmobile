@@ -39,11 +39,11 @@ public class ImportPassWalletActivity extends AppCompatActivity {
                             UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), loadDefaultPasswalletFromTemplate());
                         } catch (IOException e) {
                             Log.e(TAG, e.getMessage(), e);
-                            ActivityUtils.displayErrorMessage(this, "Fatal Error", "Error saving not encrypted passwallet file:" + e.getMessage());
+                            ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
                             return;
                         }
                     } else {
-                        Log.e(TAG, "Data is null, resultCode " + resultCode);
+                        Log.e(TAG, String.valueOf(resultCode));
                     }
                 }
                 break;
@@ -60,11 +60,11 @@ public class ImportPassWalletActivity extends AppCompatActivity {
                             startManagePassWalletActivity(selectedWalletURI);
                         } catch (IOException e) {
                             Log.e(TAG, e.getMessage(), e);
-                            ActivityUtils.displayErrorMessage(this, "Fatal Error", "Error saving passwallet file:" + e.getMessage());
+                            ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
                             return;
                         }
                     } else {
-                        Log.e(TAG, "Data is null, resultCode " + resultCode);
+                        Log.e(TAG, String.valueOf(resultCode));
                     }
                 }
                 break;
