@@ -2,7 +2,6 @@ package ro.group305.passwalletandroidclient.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -24,12 +23,7 @@ public class ActivityUtils {
         alertDialog.setTitle(title);
         alertDialog.setMessage(message);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                (dialog, which) -> dialog.dismiss());
         alertDialog.show();
     }
 
@@ -37,7 +31,7 @@ public class ActivityUtils {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("selectedWalletURI", selectedWalletURI.toString());
-        editor.commit();
+        editor.apply();
     }
 
     public static String loadLastSelectedFile(Activity activity) {

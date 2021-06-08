@@ -18,7 +18,7 @@ import ro.group305.passwalletandroidclient.service.XMLFileService;
 public class UserAccountXmlUriDAO implements IUserAccountDAO {
     private static final String TAG = "PassWallet";
 
-    private ro.eu.passwallet.model.dao.UserAccountXMLDAO coreUserAccountXMLDAO;
+    private final ro.eu.passwallet.model.dao.UserAccountXMLDAO coreUserAccountXMLDAO;
     private List<UserAccount> userAccounts;
 
     public UserAccountXmlUriDAO(Uri encryptedWalletFileURI, ContentResolver contentResolver, CryptographyService cryptographyService) {
@@ -69,7 +69,7 @@ public class UserAccountXmlUriDAO implements IUserAccountDAO {
             return userAccounts;
         }
         List<UserAccount> sortedUserAccounts = new ArrayList<>(userAccounts);
-        Collections.sort(sortedUserAccounts, comparator);
+        sortedUserAccounts.sort(comparator);
         return Collections.unmodifiableList(sortedUserAccounts);
     }
 }

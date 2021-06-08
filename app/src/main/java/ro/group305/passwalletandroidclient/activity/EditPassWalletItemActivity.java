@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -23,21 +22,17 @@ public class EditPassWalletItemActivity extends AppCompatActivity {
 
     private void createSavePasswalletItemButton() {
         Button savePasswalletItemButton = findViewById(R.id.save_passwallet_item_button);
-        savePasswalletItemButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                UserAccount userAccount = buildUserAccount();
-                UserAccountUIValidator validator = new UserAccountUIValidator(EditPassWalletItemActivity.this);
-                if (!validator.isValid(userAccount)) {
-                    return;
-                }
-
-                Intent userAccountIntent = new Intent();
-                userAccountIntent.putExtra("updatedUserAccount", userAccount);
-                setResult(Activity.RESULT_OK, userAccountIntent);
-                finish();
+        savePasswalletItemButton.setOnClickListener(v -> {
+            UserAccount userAccount = buildUserAccount();
+            UserAccountUIValidator validator = new UserAccountUIValidator(EditPassWalletItemActivity.this);
+            if (!validator.isValid(userAccount)) {
+                return;
             }
+
+            Intent userAccountIntent = new Intent();
+            userAccountIntent.putExtra("updatedUserAccount", userAccount);
+            setResult(Activity.RESULT_OK, userAccountIntent);
+            finish();
         });
     }
 

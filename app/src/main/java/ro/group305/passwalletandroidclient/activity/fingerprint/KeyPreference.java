@@ -11,8 +11,8 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 
 public class KeyPreference {
-    private SharedPreferences sharedPref;
-    private String keyPrefName;
+    private final SharedPreferences sharedPref;
+    private final String keyPrefName;
 
     public KeyPreference(SharedPreferences sharedPref, String keyPrefName) {
         Objects.requireNonNull(sharedPref, keyPrefName);

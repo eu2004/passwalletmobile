@@ -36,9 +36,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     private static final int VIEW_ITEM_ACTION_RESULT = 2;
 
     private UserAccountXmlUriDAO userAccountDAO;
-    private CryptographyService cryptographyService;
     private UserAccountsListAdapter userAccountsAdapter;
-    private Uri encryptedWalletFileURI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +45,9 @@ public class ManagePassWalletActivity extends AppCompatActivity {
 
         try {
             Intent intent = getIntent();
-            encryptedWalletFileURI = Uri.parse(intent.getStringExtra("encryptedWalletFileURI"));
+            Uri encryptedWalletFileURI = Uri.parse(intent.getStringExtra("encryptedWalletFileURI"));
             String key = new String(intent.getByteArrayExtra("key"));
-            cryptographyService = new CryptographyService(key);
+            CryptographyService cryptographyService = new CryptographyService(key);
             userAccountDAO = new UserAccountXmlUriDAO(encryptedWalletFileURI, getContentResolver(), cryptographyService);
             createSearchView();
             createAddButton();

@@ -34,26 +34,17 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
     private final int resource;
 
-    private int dropDownResource;
+    private final int dropDownResource;
 
     private List<Map<String, String>> accounts;
 
-    private boolean objectsFromResources;
-
-    private int fieldId = 0;
-
-    private boolean notifyOnChange = true;
+    private final int fieldId;
 
     private ArrayList<Map<String, String>> originalValues;
     private ArrayFilter filter;
-    private String[] attributesToDisplay;
-    private UserAccountXmlUriDAO userAccountDAO;
-    private final Comparator nickNameComparator = new Comparator<UserAccount>() {
-        @Override
-        public int compare(UserAccount o1, UserAccount o2) {
-            return o1.getNickName().compareToIgnoreCase(o2.getNickName());
-        }
-    };
+    private final String[] attributesToDisplay;
+    private final UserAccountXmlUriDAO userAccountDAO;
+    private final Comparator<UserAccount> nickNameComparator = (o1, o2) -> o1.getNickName().compareToIgnoreCase(o2.getNickName());
 
     public UserAccountsListAdapter(@NonNull Context context, @LayoutRes int resource,
                                    @IdRes int textViewResourceId, @NonNull UserAccountXmlUriDAO userAccountDAO,
@@ -71,12 +62,6 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         accounts = getAdapterData(userAccountDAO.getSortedUserAccounts(nickNameComparator));
         originalValues = null;
         this.notifyDataSetChanged();
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
-        notifyOnChange = true;
     }
 
     @Override
@@ -146,14 +131,10 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
         if (this.context instanceof Activity) {
             ((Activity) UserAccountsListAdapter.this.context).registerForContextMenu(text);
-            text.setOnClickListener(new android.view.View.OnClickListener()
-            {
-                public void onClick(View v)
-                {
-                    ((Activity) UserAccountsListAdapter.this.context).openContextMenu(v);
-                    v.showContextMenu();
+            text.setOnClickListener(v -> {
+                ((Activity) UserAccountsListAdapter.this.context).openContextMenu(v);
+                v.showContextMenu();
 
-                }
             });
         }
 
@@ -184,7 +165,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         }
 
         // Otherwise, only return options that came from static resources.
-        if (!objectsFromResources || accounts == null || accounts.isEmpty()) {
+        if (accounts == null || accounts.isEmpty()) {
             return null;
         }
         final int size = accounts.size();
@@ -218,7 +199,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
             final FilterResults results = new FilterResults();
 
             if (originalValues == null) {
-                originalValues = new ArrayList<Map<String, String>>(accounts);
+                originalValues = new ArrayList<>(accounts);
             }
 
             if (prefix == null || prefix.length() == 0) {
@@ -228,7 +209,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
             } else {
                 final String prefixString = prefix.toString().toLowerCase();
                 List<UserAccount> filteredUsersAccounts = new ArrayList<>(userAccountDAO.findUsersAccountsByName(prefixString));
-                Collections.sort(filteredUsersAccounts, nickNameComparator);
+                filteredUsersAccounts.sort(nickNameComparator);
                 final List<Map<String, String>> newValues = getAdapterData(filteredUsersAccounts);
                 results.values = newValues;
                 results.count = newValues.size();

@@ -10,6 +10,7 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +31,7 @@ class UserAccountXMLSerializer {
         }
         serializer.endTag("", "USERSACCOUNTS");
         serializer.endDocument();
-        return writer.toString().getBytes("UTF-8");
+        return writer.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     private void toXMLElement(XmlSerializer serializer, UserAccount userAccount) throws IOException {
@@ -107,9 +108,8 @@ class UserAccountXMLSerializer {
                     break;
 
                 case XmlPullParser.END_TAG:
-                    switch (name) {
-                        case "userAccount":
-                            userAccounts.add(userAccount);
+                    if ("userAccount".equals(name)) {
+                        userAccounts.add(userAccount);
                     }
                     break;
             }

@@ -23,7 +23,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 public class CryptoHelper {
     private static final String TAG = "PassWallet";
-    private KeyPreference keyPreference;
+    private final KeyPreference keyPreference;
 
     public CryptoHelper(KeyPreference keyPreference) {
         Objects.requireNonNull(keyPreference);

@@ -16,10 +16,10 @@ import ro.group305.passwalletandroidclient.utils.UriUtils;
 
 public class XMLFileService implements IXMLFileService<UserAccount> {
     private static final String TAG = "PassWallet";
-    private Uri encryptedWalletFileURI;
-    private ContentResolver contentResolver;
-    private CryptographyService cryptographyService;
-    private UserAccountXMLSerializer userAccountXMLSerializer = new UserAccountXMLSerializer();
+    private final Uri encryptedWalletFileURI;
+    private final ContentResolver contentResolver;
+    private final CryptographyService cryptographyService;
+    private final UserAccountXMLSerializer userAccountXMLSerializer = new UserAccountXMLSerializer();
 
     public XMLFileService(Uri encryptedWalletFileURI, ContentResolver contentResolver, CryptographyService cryptographyService) {
         this.encryptedWalletFileURI = encryptedWalletFileURI;

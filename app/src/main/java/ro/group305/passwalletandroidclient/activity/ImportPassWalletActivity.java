@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -91,27 +90,23 @@ public class ImportPassWalletActivity extends AppCompatActivity {
 
     private void createHowToImportButton() {
         TextView howToImportButton = findViewById(R.id.how_to_import_button);
-        howToImportButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(ImportPassWalletActivity.this, HowToImportPasswalletActivity.class);
-                    startActivity(intent);
-                } catch (Exception exception) {
-                    Log.e(TAG, exception.getMessage(), exception);
-                }
+        howToImportButton.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(ImportPassWalletActivity.this, HowToImportPasswalletActivity.class);
+                startActivity(intent);
+            } catch (Exception exception) {
+                Log.e(TAG, exception.getMessage(), exception);
             }
         });
     }
 
     private void createNotEncryptedLocalPasswalletButton() {
         TextView createLocalSamplePasswalletButton = findViewById(R.id.create_not_encrypted_local_passwallet_button);
-        createLocalSamplePasswalletButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    createCreateNotEncryptedLocalWalletFile();
-                } catch (Exception exception) {
-                    Log.e(TAG, exception.getMessage(), exception);
-                }
+        createLocalSamplePasswalletButton.setOnClickListener(v -> {
+            try {
+                createCreateNotEncryptedLocalWalletFile();
+            } catch (Exception exception) {
+                Log.e(TAG, exception.getMessage(), exception);
             }
         });
     }
@@ -131,18 +126,16 @@ public class ImportPassWalletActivity extends AppCompatActivity {
 
     private void createImportNotEncryptedPasswalletButton() {
         Button selectLocalPasswalletButton = findViewById(R.id.import_passwallet_button);
-        selectLocalPasswalletButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    if (!validatePasswalletKey()) {
-                        Log.e(TAG, "Passwallet key is empty!");
-                        ActivityUtils.displayErrorMessage(ImportPassWalletActivity.this, "Error importing not encrypted wallet", "Key is empty!");
-                        return;
-                    }
-                    browseForNotEncryptedWalletFile();
-                } catch (Exception exception) {
-                    Log.e(TAG, exception.getMessage(), exception);
+        selectLocalPasswalletButton.setOnClickListener(v -> {
+            try {
+                if (!validatePasswalletKey()) {
+                    Log.e(TAG, "Passwallet key is empty!");
+                    ActivityUtils.displayErrorMessage(ImportPassWalletActivity.this, "Error importing not encrypted wallet", "Key is empty!");
+                    return;
                 }
+                browseForNotEncryptedWalletFile();
+            } catch (Exception exception) {
+                Log.e(TAG, exception.getMessage(), exception);
             }
         });
     }

@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -35,25 +34,23 @@ public class CreatePassWalletActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            case CREATE_REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-                    if (data != null) {
-                        Uri selectedWalletURI = data.getData();
-                        try {
-                            UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), encryptedDefaultPasswalletContent);
-                        } catch (IOException e) {
-                            Log.e(TAG, e.getMessage(), e);
-                            ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
-                            return;
-                        }
-                        ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
-                        startManagePassWalletActivity(selectedWalletURI);
-                    } else {
-                        Log.e(TAG, String.valueOf(resultCode));
+        if (requestCode == CREATE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data != null) {
+                    Uri selectedWalletURI = data.getData();
+                    try {
+                        UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), encryptedDefaultPasswalletContent);
+                    } catch (IOException e) {
+                        Log.e(TAG, e.getMessage(), e);
+                        ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
+                        return;
                     }
+                    ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
+                    startManagePassWalletActivity(selectedWalletURI);
+                } else {
+                    Log.e(TAG, String.valueOf(resultCode));
                 }
-                break;
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -69,21 +66,19 @@ public class CreatePassWalletActivity extends AppCompatActivity {
 
     private void createBrowsePasswalletButton() {
         Button selectLocalPasswalletButton = findViewById(R.id.create_passwallet_button);
-        selectLocalPasswalletButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    if (!validatePasswalletKey()) {
-                        Log.e(TAG, "Passwallet key is empty!");
-                        ActivityUtils.displayErrorMessage(CreatePassWalletActivity.this, "Error creating wallet", "Key is empty!");
-                        return;
-                    }
-                    byte[] defaultPasswallet = loadDefaultPasswalletFromTemplate();
-                    EditText password = findViewById(R.id.walletKey);
-                    encryptedDefaultPasswalletContent = encrypt(defaultPasswallet, password.getText().toString());
-                    browseForEncryptedWalletFile();
-                } catch (Exception exception) {
-                    Log.e(TAG, exception.getMessage(), exception);
+        selectLocalPasswalletButton.setOnClickListener(v -> {
+            try {
+                if (!validatePasswalletKey()) {
+                    Log.e(TAG, "Passwallet key is empty!");
+                    ActivityUtils.displayErrorMessage(CreatePassWalletActivity.this, "Error creating wallet", "Key is empty!");
+                    return;
                 }
+                byte[] defaultPasswallet = loadDefaultPasswalletFromTemplate();
+                EditText password = findViewById(R.id.walletKey);
+                encryptedDefaultPasswalletContent = encrypt(defaultPasswallet, password.getText().toString());
+                browseForEncryptedWalletFile();
+            } catch (Exception exception) {
+                Log.e(TAG, exception.getMessage(), exception);
             }
         });
     }

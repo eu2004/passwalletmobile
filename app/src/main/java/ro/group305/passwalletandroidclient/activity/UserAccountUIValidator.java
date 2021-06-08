@@ -10,7 +10,7 @@ import ro.group305.passwalletandroidclient.R;
 class UserAccountUIValidator {
     private static final String TAG = "PassWallet";
 
-    private Activity context;
+    private final Activity context;
 
     public UserAccountUIValidator(Activity context) {
         this.context = context;
