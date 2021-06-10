@@ -20,11 +20,8 @@ public class KeyPreference {
         this.keyPrefName = keyPrefName;
     }
 
-    public boolean resetKey() {
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(keyPrefName, "");
-        editor.apply();
-        return true;
+    public void resetKey() {
+        sharedPref.edit().putString(keyPrefName, "").apply();
     }
 
     public String getKeyPrefName() {

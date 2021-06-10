@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -26,17 +29,20 @@ import java.util.Objects;
 import ro.eu.passwallet.model.UserAccount;
 import ro.eu.passwallet.service.crypt.CryptographyService;
 import ro.group305.passwalletandroidclient.R;
+import ro.group305.passwalletandroidclient.activity.resulthandler.CreatePassWalletItemActivityResult;
+import ro.group305.passwalletandroidclient.activity.resulthandler.EditPassWalletItemActivityResult;
 import ro.group305.passwalletandroidclient.model.UserAccountXmlUriDAO;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 
 public class ManagePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
     private static final int EDIT_ITEM_ACTION_RESULT = 0;
-    private static final int ADD_ITEM_ACTION_RESULT = 1;
-    private static final int VIEW_ITEM_ACTION_RESULT = 2;
 
     private UserAccountXmlUriDAO userAccountDAO;
     private UserAccountsListAdapter userAccountsAdapter;
+
+    private ActivityResultLauncher<String> addItemActionResult;
+    private ActivityResultLauncher<UserAccount> editItemActionResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +58,19 @@ public class ManagePassWalletActivity extends AppCompatActivity {
             createSearchView();
             createAddButton();
             initAccountsCount();
+
+            addItemActionResult = registerForActivityResult(new CreatePassWalletItemActivityResult(this), output -> {
+                onAddItemActionResult(output);
+                initAccountsCount();
+            });
+            editItemActionResult = registerForActivityResult(new EditPassWalletItemActivityResult(this), output -> {
+                onEditItemActionResult(output);
+            });
         } catch (Exception exception) {
             Log.e(TAG, exception.getMessage(), exception);
             ActivityUtils.displayErrorMessage(this, "Error loading PassWallet", exception.getMessage());
             finish();
-        }finally {
+        } finally {
             getIntent().removeExtra("key");
         }
     }
@@ -64,22 +78,6 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     private void initAccountsCount() {
         TextView accountsCount = findViewById(R.id.accounts_count_textView);
         accountsCount.setText(String.valueOf(userAccountDAO.getUserAccountsCount()));
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case ADD_ITEM_ACTION_RESULT:
-                onAddItemActionResult(resultCode, data);
-                initAccountsCount();
-                break;
-            case EDIT_ITEM_ACTION_RESULT:
-                onEditItemActionResult(resultCode, data);
-                break;
-            case VIEW_ITEM_ACTION_RESULT:
-                break;
-        }
     }
 
     @Override
@@ -105,16 +103,15 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         if (res.getString(R.string.copy).contentEquals(item.getTitle())) {
             Log.d(TAG, userAccount.getNickName());
             copyInfoToClipboard(userAccount);
-        }else if (res.getString(R.string.copyKey).contentEquals(item.getTitle())) {
+        } else if (res.getString(R.string.copyKey).contentEquals(item.getTitle())) {
             Log.d(TAG, userAccount.getNickName());
             copyPasswordToClipboard(userAccount);
-        }
-        else if (res.getString(R.string.view).contentEquals(item.getTitle())) {
+        } else if (res.getString(R.string.view).contentEquals(item.getTitle())) {
             Log.d(TAG, "View ...");
             viewUserAccount(userAccount);
-        }else if (res.getString(R.string.edit).contentEquals(item.getTitle())) {
+        } else if (res.getString(R.string.edit).contentEquals(item.getTitle())) {
             Log.d(TAG, userAccount.getNickName());
-            editUserAccount(userAccount);
+            editItemActionResult.launch(userAccount);
         } else if (res.getString(R.string.delete).contentEquals(item.getTitle())) {
             Log.d(TAG, userAccount.getNickName());
             deleteUserAccount(userAccount);
@@ -123,18 +120,16 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
-    private void onEditItemActionResult(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            UserAccount updatedUserAccount = (UserAccount) data.getSerializableExtra("updatedUserAccount");
-            try {
-                boolean updated = userAccountDAO.updateUserAccount(updatedUserAccount);
-                if (updated) {
-                    userAccountsAdapter.updateUserAccountsList();
-                }
-            } catch (Exception exception) {
-                Log.e(TAG, exception.getMessage(), exception);
-                ActivityUtils.displayErrorMessage(this, "Error updating passwallet item", exception.getMessage());
+    private void onEditItemActionResult(Intent data) {
+        UserAccount updatedUserAccount = (UserAccount) data.getSerializableExtra("updatedUserAccount");
+        try {
+            boolean updated = userAccountDAO.updateUserAccount(updatedUserAccount);
+            if (updated) {
+                userAccountsAdapter.updateUserAccountsList();
             }
+        } catch (Exception exception) {
+            Log.e(TAG, exception.getMessage(), exception);
+            ActivityUtils.displayErrorMessage(this, "Error updating passwallet item", exception.getMessage());
         }
     }
 
@@ -165,34 +160,21 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                 .setNegativeButton(getResources().getString(R.string.no), dialogClickListener).show();
     }
 
-    private void onAddItemActionResult(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            UserAccount newUserAccount = (UserAccount) data.getSerializableExtra("newUserAccount");
-            try {
-                userAccountDAO.createUserAccount(newUserAccount);
-                userAccountsAdapter.updateUserAccountsList();
-            } catch (Exception exception) {
-                Log.e(TAG, exception.getMessage(), exception);
-                ActivityUtils.displayErrorMessage(this, "Error creating passwallet item", exception.getMessage());
-            }
+    private void onAddItemActionResult(Intent data) {
+        UserAccount newUserAccount = (UserAccount) data.getSerializableExtra("newUserAccount");
+        try {
+            userAccountDAO.createUserAccount(newUserAccount);
+            userAccountsAdapter.updateUserAccountsList();
+        } catch (Exception exception) {
+            Log.e(TAG, exception.getMessage(), exception);
+            ActivityUtils.displayErrorMessage(this, "Error creating passwallet item", exception.getMessage());
         }
-    }
-
-    private void addUserAccount() {
-        Intent intent = new Intent(this, CreatePassWalletItemActivity.class);
-        startActivityForResult(intent, ADD_ITEM_ACTION_RESULT);
     }
 
     private void viewUserAccount(UserAccount userAccount) {
         Intent intent = new Intent(this, ViewPassWalletItemActivity.class);
         intent.putExtra("selectedUserAccount", userAccount);
-        startActivityForResult(intent, VIEW_ITEM_ACTION_RESULT);
-    }
-
-    private void editUserAccount(UserAccount userAccount) {
-        Intent intent = new Intent(this, EditPassWalletItemActivity.class);
-        intent.putExtra("selectedUserAccount", userAccount);
-        startActivityForResult(intent, EDIT_ITEM_ACTION_RESULT);
+        startActivity(intent);
     }
 
     private void copyPasswordToClipboard(UserAccount userAccount) {
@@ -209,7 +191,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
 
     private void createAddButton() {
         Button addButton = findViewById(R.id.create_passwallet_item_button);
-        addButton.setOnClickListener(v -> ManagePassWalletActivity.this.addUserAccount());
+        addButton.setOnClickListener(v -> ManagePassWalletActivity.this.addItemActionResult.launch(""));
     }
 
     private void createSearchView() {

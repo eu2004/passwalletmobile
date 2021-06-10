@@ -1,58 +1,47 @@
 package ro.group305.passwalletandroidclient.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import ro.eu.passwallet.service.crypt.CryptographyService;
 import ro.group305.passwalletandroidclient.R;
+import ro.group305.passwalletandroidclient.activity.resulthandler.CreateXmlFileActivityResult;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 import ro.group305.passwalletandroidclient.utils.UriUtils;
 
 public class CreatePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
 
-    private static final int CREATE_REQUEST_CODE = 1;
     private byte[] encryptedDefaultPasswalletContent;
+    private ActivityResultLauncher<String> createXmlFieActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pass_wallet);
         createBrowsePasswalletButton();
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == CREATE_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data != null) {
-                    Uri selectedWalletURI = data.getData();
-                    try {
-                        UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), encryptedDefaultPasswalletContent);
-                    } catch (IOException e) {
-                        Log.e(TAG, e.getMessage(), e);
-                        ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
-                        return;
-                    }
-                    ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
-                    startManagePassWalletActivity(selectedWalletURI);
-                } else {
-                    Log.e(TAG, String.valueOf(resultCode));
-                }
+        createXmlFieActivity = registerForActivityResult(new CreateXmlFileActivityResult(), selectedWalletURI -> {
+            try {
+                UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), encryptedDefaultPasswalletContent);
+            } catch (IOException e) {
+                Log.e(TAG, e.getMessage(), e);
+                ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
+                return;
             }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+            ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
+            startManagePassWalletActivity(selectedWalletURI);
+        });
     }
 
     private void startManagePassWalletActivity(Uri selectedWalletURI) {
@@ -76,7 +65,7 @@ public class CreatePassWalletActivity extends AppCompatActivity {
                 byte[] defaultPasswallet = loadDefaultPasswalletFromTemplate();
                 EditText password = findViewById(R.id.walletKey);
                 encryptedDefaultPasswalletContent = encrypt(defaultPasswallet, password.getText().toString());
-                browseForEncryptedWalletFile();
+                createXmlFieActivity.launch("");
             } catch (Exception exception) {
                 Log.e(TAG, exception.getMessage(), exception);
             }
@@ -97,12 +86,5 @@ public class CreatePassWalletActivity extends AppCompatActivity {
         try (InputStream passwalletTemplate = getResources().getAssets().open("passwallet_xml_file_template.xml")) {
             return UriUtils.loadInputStreamToByteArray(passwalletTemplate);
         }
-    }
-
-    private void browseForEncryptedWalletFile() {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/xml");
-        startActivityForResult(intent, CREATE_REQUEST_CODE);
     }
 }

@@ -124,7 +124,9 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         final Map<String, ?> item = getItem(position);
         StringBuilder itemText = new StringBuilder();
         for (String attribute : attributesToDisplay) {
-            itemText.append(item.get(attribute)).append(" ");
+            if (item.get(attribute) != null) {
+                itemText.append(item.get(attribute)).append(" ");
+            }
         }
 
         text.setText(itemText);
@@ -203,7 +205,7 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
             }
 
             if (prefix == null || prefix.length() == 0) {
-                final ArrayList<Map<String, ?>> list = new ArrayList<Map<String, ?>>(originalValues);
+                final ArrayList<Map<String, ?>> list = new ArrayList<>(originalValues);
                 results.values = list;
                 results.count = list.size();
             } else {

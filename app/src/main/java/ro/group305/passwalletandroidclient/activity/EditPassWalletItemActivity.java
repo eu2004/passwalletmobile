@@ -25,7 +25,7 @@ public class EditPassWalletItemActivity extends AppCompatActivity {
         savePasswalletItemButton.setOnClickListener(v -> {
             UserAccount userAccount = buildUserAccount();
             UserAccountUIValidator validator = new UserAccountUIValidator(EditPassWalletItemActivity.this);
-            if (!validator.isValid(userAccount)) {
+            if (validator.isNotValid(userAccount)) {
                 return;
             }
 

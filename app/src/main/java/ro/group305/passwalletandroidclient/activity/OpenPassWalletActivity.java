@@ -1,6 +1,5 @@
 package ro.group305.passwalletandroidclient.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,6 +11,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,15 +36,11 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.biometric.BiometricManager;
-import androidx.biometric.BiometricPrompt;
-import androidx.core.content.ContextCompat;
 import ro.eu.passwallet.service.crypt.CryptographyService;
 import ro.group305.passwalletandroidclient.R;
 import ro.group305.passwalletandroidclient.activity.fingerprint.CryptoHelper;
 import ro.group305.passwalletandroidclient.activity.fingerprint.KeyPreference;
+import ro.group305.passwalletandroidclient.activity.resulthandler.OpenXmlFileActivityResult;
 import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 import ro.group305.passwalletandroidclient.utils.UriUtils;
 
@@ -51,6 +53,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     private KeyPreference keyPreference;
     private CryptoHelper cryptoHelper;
     private boolean biometricFeatureActive;
+    private ActivityResultLauncher<String> openXmlFieActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +63,19 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
         createBrowsePasswalletButton();
         createOpenSelectedPasswalletButton();
-        creatOpenPasswalletFingerprintButton();
+        createOpenPasswalletFingerprintButton();
         createCreateNewPasswalletLink();
         createImportPasswalletLink();
 
         initSelectedWalletURI();
+
+        openXmlFieActivity = registerForActivityResult(new OpenXmlFileActivityResult(), selectedWalletURI -> {
+            assert selectedWalletURI != null;
+            Log.i(TAG, selectedWalletURI.toString());
+            ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
+            selectedPassWalletURI = selectedWalletURI;
+            setSelectedPassWalletNameLabel();
+        });
     }
 
     private void checkBiometric() {
@@ -200,7 +211,11 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     }
 
     private boolean resetKey() {
-        return getCryptoHelper().resetKey() && getKeyPreference().resetKey();
+        if (getCryptoHelper().resetKey()) {
+            getKeyPreference().resetKey();
+            return true;
+        }
+        return false;
     }
 
     private void createCreateNewPasswalletLink() {
@@ -254,7 +269,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         cryptoHelper = null;
     }
 
-    private void creatOpenPasswalletFingerprintButton() {
+    private void createOpenPasswalletFingerprintButton() {
         checkBiometric();
 
         Button openSelectedPasswalletButton = findViewById(R.id.open_passwallet_fingerprint_button);
@@ -351,36 +366,11 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         Button selectLocalPasswalletButton = findViewById(R.id.browse_passwallet_file_button);
         selectLocalPasswalletButton.setOnClickListener(v -> {
             try {
-                browseForEncryptedWalletFile();
+                openXmlFieActivity.launch("");
             } catch (Exception exception) {
                 Log.e(TAG, exception.getMessage(), exception);
             }
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == READ_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data != null) {
-                    selectedPassWalletURI = data.getData();
-                    assert selectedPassWalletURI != null;
-                    Log.i(TAG, selectedPassWalletURI.toString());
-                    ActivityUtils.saveSelectedFileToPreferences(this, selectedPassWalletURI);
-                    setSelectedPassWalletNameLabel();
-                } else {
-                    Log.e(TAG, ActivityUtils.appendStrings("Data is null, resultCode ", String.valueOf(resultCode)));
-                }
-            }
-        }
-    }
-
-    private void browseForEncryptedWalletFile() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/xml");
-        startActivityForResult(intent, READ_REQUEST_CODE);
-    }
 }
