@@ -32,15 +32,17 @@ public class CreatePassWalletActivity extends AppCompatActivity {
         createBrowsePasswalletButton();
 
         createXmlFieActivity = registerForActivityResult(new CreateXmlFileActivityResult(), selectedWalletURI -> {
-            try {
-                UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), encryptedDefaultPasswalletContent);
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage(), e);
-                ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
-                return;
+            if (selectedWalletURI != null) {
+                try {
+                    UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), encryptedDefaultPasswalletContent);
+                } catch (IOException e) {
+                    Log.e(TAG, e.getMessage(), e);
+                    ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
+                    return;
+                }
+                ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
+                startManagePassWalletActivity(selectedWalletURI);
             }
-            ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
-            startManagePassWalletActivity(selectedWalletURI);
         });
     }
 

@@ -44,25 +44,29 @@ public class ImportPassWalletActivity extends AppCompatActivity {
         createHowToImportButton();
 
         createXmlFieActivity = registerForActivityResult(new CreateXmlFileActivityResult(), selectedWalletURI -> {
-            try {
-                UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), loadDefaultPasswalletFromTemplate());
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage(), e);
-                ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
+            if (selectedWalletURI != null) {
+                try {
+                    UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), loadDefaultPasswalletFromTemplate());
+                } catch (IOException e) {
+                    Log.e(TAG, e.getMessage(), e);
+                    ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
+                }
             }
         });
 
         openXmlFieActivity = registerForActivityResult(new OpenXmlFileActivityResult(), selectedWalletURI -> {
-            try {
-                EditText password = findViewById(R.id.walletKey);
-                byte[] passwalletContent = UriUtils.getUriContent(selectedWalletURI, this.getContentResolver());
-                CryptographyService cryptographyService = new CryptographyService(password.getText().toString());
-                UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), cryptographyService.encrypt(passwalletContent));
-                ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
-                startManagePassWalletActivity(selectedWalletURI);
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage(), e);
-                ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
+            if (selectedWalletURI != null) {
+                try {
+                    EditText password = findViewById(R.id.walletKey);
+                    byte[] passwalletContent = UriUtils.getUriContent(selectedWalletURI, this.getContentResolver());
+                    CryptographyService cryptographyService = new CryptographyService(password.getText().toString());
+                    UriUtils.saveUriContent(selectedWalletURI, this.getContentResolver(), cryptographyService.encrypt(passwalletContent));
+                    ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
+                    startManagePassWalletActivity(selectedWalletURI);
+                } catch (IOException e) {
+                    Log.e(TAG, e.getMessage(), e);
+                    ActivityUtils.displayErrorMessage(this, "Fatal Error", e.getMessage());
+                }
             }
         });
     }
