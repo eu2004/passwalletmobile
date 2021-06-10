@@ -40,7 +40,8 @@
             android:layout_marginStart="5dp"
             android:ems="12"
             android:inputType="textPassword"
-            android:autofillHints="" />
+            android:autofillHints=""
+            tools:ignore="LabelFor" />
 
         <Button
             android:id="@+id/import_passwallet_button"

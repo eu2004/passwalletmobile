@@ -59,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:ems="12"
                 android:inputType="textPassword"
-                android:autofillHints="" />
+                android:autofillHints=""
+                tools:ignore="LabelFor"/>
         </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"

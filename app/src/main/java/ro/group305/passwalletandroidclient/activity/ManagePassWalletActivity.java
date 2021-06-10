@@ -157,13 +157,15 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     }
 
     private void onAddItemActionResult(Intent data) {
-        UserAccount newUserAccount = (UserAccount) data.getSerializableExtra("newUserAccount");
-        try {
-            userAccountDAO.createUserAccount(newUserAccount);
-            userAccountsAdapter.updateUserAccountsList();
-        } catch (Exception exception) {
-            Log.e(TAG, exception.getMessage(), exception);
-            ActivityUtils.displayErrorMessage(this, "Error creating passwallet item", exception.getMessage());
+        if (data != null && data.hasExtra("newUserAccount")) {
+            UserAccount newUserAccount = (UserAccount) data.getSerializableExtra("newUserAccount");
+            try {
+                userAccountDAO.createUserAccount(newUserAccount);
+                userAccountsAdapter.updateUserAccountsList();
+            } catch (Exception exception) {
+                Log.e(TAG, exception.getMessage(), exception);
+                ActivityUtils.displayErrorMessage(this, "Error creating passwallet item", exception.getMessage());
+            }
         }
     }
 

@@ -95,10 +95,13 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                 Log.e(TAG, "BIOMETRIC_ERROR_NONE_ENROLLED");
                 break;
             case BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED:
+                Log.e(TAG, "BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED");
                 break;
             case BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED:
+                Log.e(TAG, "BIOMETRIC_ERROR_UNSUPPORTED");
                 break;
             case BiometricManager.BIOMETRIC_STATUS_UNKNOWN:
+                Log.e(TAG, "BIOMETRIC_STATUS_UNKNOWN");
                 break;
         }
 
@@ -251,24 +254,28 @@ public class OpenPassWalletActivity extends AppCompatActivity {
     }
 
     private void setSelectedPassWalletNameLabel() {
-        Cursor returnCursor;
-        try {
-            returnCursor =
-                    getContentResolver().query(selectedPassWalletURI, null, null, null, null);
-        } catch (java.lang.SecurityException ex) {
-            Log.e(TAG, ex.getMessage(), ex);
-            return;
+        Cursor returnCursor = null;
+        if (selectedPassWalletURI != null){
+            try {
+                returnCursor =
+                        getContentResolver().query(selectedPassWalletURI, null, null, null, null);
+            } catch (java.lang.SecurityException ex) {
+                Log.e(TAG, ex.getMessage(), ex);
+            }
         }
 
-        assert returnCursor != null;
-        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-        if (nameIndex > -1) {
-            returnCursor.moveToFirst();
-            String name = returnCursor.getString(nameIndex);
-            selectedPassWalletName.setText(ActivityUtils.appendStrings(name, " [", selectedPassWalletURI.getPath(), "]"));
-            returnCursor.close();
-        } else {
-            selectedPassWalletName.setText(ActivityUtils.appendStrings(" [", selectedPassWalletURI.getPath(), "]"));
+        if (returnCursor != null) {
+            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            if (nameIndex > -1) {
+                returnCursor.moveToFirst();
+                String name = returnCursor.getString(nameIndex);
+                selectedPassWalletName.setText(ActivityUtils.appendStrings(name, " [", selectedPassWalletURI.getPath(), "]"));
+                returnCursor.close();
+            } else {
+                selectedPassWalletName.setText(ActivityUtils.appendStrings(" [", selectedPassWalletURI.getPath(), "]"));
+            }
+        }else{
+            selectedPassWalletName.setText("");
         }
 
         keyPreference = null;
