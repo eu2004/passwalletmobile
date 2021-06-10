@@ -5,9 +5,9 @@ android {
     defaultConfig {
         applicationId "ro.group305.passwalletandroidclient"
         minSdkVersion 28
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 30
+        versionCode 3
+        versionName "3.1.4"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {

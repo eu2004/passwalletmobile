@@ -19,6 +19,6 @@
         android:headerDividersEnabled="false"
         android:text=""
         android:textColor="#000"
-        android:textSize="30dp" />
+        android:textSize="30sp" />
 
 </LinearLayout>

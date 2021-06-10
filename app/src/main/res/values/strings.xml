@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Easy Secured PassWallet</string>
-    <string name="version">3.1.3</string>
+    <string name="version">3.1.4</string>
 
     <string name="no">No</string>
     <string name="yes">Yes</string>
@@ -38,22 +38,21 @@
     <string name="createPassWalletFileLink"><a href="#">Create PassWallet</a></string>
     <string name="importNotEncryptedPassWalletFile"><a href="#">Import Not Encrypted PassWallet</a></string>
     <string name="createEmptyNotEncryptedPassWalletFile"><a href="#">Create empty not encrypted passwallet</a></string>
-    <string name="howToImportNotEncryptedPassWalletFileLink"><a href="#">How to import ...</a></string>
     <string name="howToImportNotEncryptedPassWalletFileTitle">How To Import Not Encrypted PassWallet</string>
 
-    <string name="emptyNotEncryptedPassWalletFileInfo">In order to import your confidential data to a secured (encrypted) passwallet
+    <string name="emptyNotEncryptedPassWalletFileInfo"><![CDATA[In order to import your confidential data to a secured (encrypted) passwallet
         you need to create a xml file with you preferred xml editor or just generate an empty one using the \"Create empty not encrypted passwallet\" link.
         The plain passwallet xml file structure is at below:\n
-        &lt;USERSACCOUNTS>\n
-        \t&lt;userAccount>\n
-        \t\t&lt;description>description_1508524059202&lt;/description>\n
-        \t\t&lt;id>1&lt;/id>\n
-        \t\t&lt;name>name_1508524059202&lt;/name>\n
-        \t\t&lt;nickName>nickname_1508524059202&lt;/nickName>\n
-        \t\t&lt;password>pass_1508524059202&lt;/password>\n
-        \t\t&lt;siteURL>siteurl_1508524059202&lt;/siteURL>\n
-        \t&lt;/userAccount>\n
-        ...
-        &lt;/USERSACCOUNTS>\n
-        </string>
+        <USERSACCOUNTS>\n
+        \t<userAccount>\n
+        \t\t<description>description_1508524059202</description>\n
+        \t\t<id>1</id>\n
+        \t\t<name>name_1508524059202</name>\n
+        \t\t<nickName>nickname_1508524059202</nickName>\n
+        \t\t<password>pass_1508524059202</password>\n
+        \t\t<siteURL>siteurl_1508524059202</siteURL>\n
+        \t</userAccount>\n
+        …
+        </USERSACCOUNTS>\n
+        ]]></string>
 </resources>

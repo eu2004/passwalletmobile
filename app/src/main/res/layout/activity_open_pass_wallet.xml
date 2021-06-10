@@ -7,6 +7,10 @@
     tools:context="ro.group305.passwalletandroidclient.activity.OpenPassWalletActivity">
 
     <LinearLayout
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
@@ -54,7 +58,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="12"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:autofillHints="" />
         </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -78,11 +83,11 @@
             android:id="@+id/create_new_passwallet_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_marginTop="30dp"
             android:layout_marginStart="5dp"
             android:autoLink="web"
-            android:gravity="left"
+            android:gravity="start"
             android:text="@string/createPassWalletFileLink"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -90,11 +95,11 @@
             android:id="@+id/import_passwallet_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:layout_marginTop="5dp"
             android:layout_marginStart="5dp"
             android:autoLink="web"
-            android:gravity="left"
+            android:gravity="start"
             android:text="@string/importNotEncryptedPassWalletFile"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -102,11 +107,11 @@
             android:id="@+id/passwalet_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:layout_marginTop="5dp"
             android:layout_marginStart="5dp"
             android:autoLink="web"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/version"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 

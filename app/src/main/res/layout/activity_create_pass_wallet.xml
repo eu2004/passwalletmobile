@@ -7,6 +7,10 @@
     tools:context=".activity.CreatePassWalletActivity">
 
     <LinearLayout
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="368dp"
         android:layout_height="400dp"
         android:orientation="vertical">
@@ -35,7 +39,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:ems="12"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:autofillHints="" />
 
         <Button
             android:id="@+id/create_passwallet_button"

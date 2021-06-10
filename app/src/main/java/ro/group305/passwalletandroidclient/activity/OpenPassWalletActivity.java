@@ -93,6 +93,12 @@ public class OpenPassWalletActivity extends AppCompatActivity {
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
                 Log.e(TAG, "BIOMETRIC_ERROR_NONE_ENROLLED");
                 break;
+            case BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED:
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED:
+                break;
+            case BiometricManager.BIOMETRIC_STATUS_UNKNOWN:
+                break;
         }
 
     }
