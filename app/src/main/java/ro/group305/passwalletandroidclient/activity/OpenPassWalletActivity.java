@@ -80,7 +80,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
 
     private void checkBiometric() {
         BiometricManager biometricManager = BiometricManager.from(this);
-        switch (biometricManager.canAuthenticate()) {
+        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
             case BiometricManager.BIOMETRIC_SUCCESS:
                 Log.i(TAG, "App can authenticate using biometrics.");
                 biometricFeatureActive = true;
