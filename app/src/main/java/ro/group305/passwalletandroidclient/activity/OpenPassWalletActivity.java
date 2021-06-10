@@ -47,7 +47,6 @@ import ro.group305.passwalletandroidclient.utils.UriUtils;
 public class OpenPassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
 
-    private static final int READ_REQUEST_CODE = 42;
     private Uri selectedPassWalletURI;
     private TextView selectedPassWalletName;
     private KeyPreference keyPreference;

@@ -82,34 +82,41 @@ class UserAccountXMLSerializer {
                             break;
                         case "description":
                             myParser.next();
-                            userAccount.setDescription(getStringValue(myParser.getText()));
+                            if (userAccount != null)
+                                userAccount.setDescription(getStringValue(myParser.getText()));
                             break;
                         case "id":
                             myParser.next();
-                            userAccount.setId(Integer.parseInt(myParser.getText()));
+                            if (userAccount != null)
+                                userAccount.setId(Integer.parseInt(myParser.getText()));
                             break;
                         case "name":
                             myParser.next();
-                            userAccount.setName(getStringValue(myParser.getText()));
+                            if (userAccount != null)
+                                userAccount.setName(getStringValue(myParser.getText()));
                             break;
                         case "nickName":
                             myParser.next();
-                            userAccount.setNickName(getStringValue(myParser.getText()));
+                            if (userAccount != null)
+                                userAccount.setNickName(getStringValue(myParser.getText()));
                             break;
                         case "password":
                             myParser.next();
-                            userAccount.setPassword(getStringValue(myParser.getText()));
+                            if (userAccount != null)
+                                userAccount.setPassword(getStringValue(myParser.getText()));
                             break;
                         case "siteURL":
                             myParser.next();
-                            userAccount.setSiteURL(getStringValue(myParser.getText()));
+                            if (userAccount != null)
+                                userAccount.setSiteURL(getStringValue(myParser.getText()));
                             break;
                     }
                     break;
 
                 case XmlPullParser.END_TAG:
                     if ("userAccount".equals(name)) {
-                        userAccounts.add(userAccount);
+                        if (userAccount != null)
+                            userAccounts.add(userAccount);
                     }
                     break;
             }

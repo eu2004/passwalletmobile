@@ -14,7 +14,7 @@ import ro.group305.passwalletandroidclient.activity.CreatePassWalletItemActivity
 
 public class CreatePassWalletItemActivityResult extends ActivityResultContract<String, Intent> {
 
-    private AppCompatActivity appCompatActivity;
+    private final AppCompatActivity appCompatActivity;
 
     public CreatePassWalletItemActivityResult(AppCompatActivity appCompatActivity) {
         super();

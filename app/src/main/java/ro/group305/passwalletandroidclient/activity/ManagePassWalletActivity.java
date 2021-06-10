@@ -1,6 +1,5 @@
 package ro.group305.passwalletandroidclient.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -9,11 +8,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -22,6 +16,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +34,6 @@ import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 
 public class ManagePassWalletActivity extends AppCompatActivity {
     private static final String TAG = "PassWallet";
-    private static final int EDIT_ITEM_ACTION_RESULT = 0;
 
     private UserAccountXmlUriDAO userAccountDAO;
     private UserAccountsListAdapter userAccountsAdapter;
@@ -63,9 +60,7 @@ public class ManagePassWalletActivity extends AppCompatActivity {
                 onAddItemActionResult(output);
                 initAccountsCount();
             });
-            editItemActionResult = registerForActivityResult(new EditPassWalletItemActivityResult(this), output -> {
-                onEditItemActionResult(output);
-            });
+            editItemActionResult = registerForActivityResult(new EditPassWalletItemActivityResult(this), this::onEditItemActionResult);
         } catch (Exception exception) {
             Log.e(TAG, exception.getMessage(), exception);
             ActivityUtils.displayErrorMessage(this, "Error loading PassWallet", exception.getMessage());

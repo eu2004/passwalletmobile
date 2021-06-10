@@ -123,9 +123,11 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
         final Map<String, ?> item = getItem(position);
         StringBuilder itemText = new StringBuilder();
-        for (String attribute : attributesToDisplay) {
-            if (item.get(attribute) != null) {
-                itemText.append(item.get(attribute)).append(" ");
+        if (item != null) {
+            for (String attribute : attributesToDisplay) {
+                if (item.get(attribute) != null) {
+                    itemText.append(item.get(attribute)).append(" ");
+                }
             }
         }
 

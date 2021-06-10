@@ -11,12 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import ro.eu.passwallet.model.UserAccount;
-import ro.group305.passwalletandroidclient.activity.CreatePassWalletItemActivity;
 import ro.group305.passwalletandroidclient.activity.EditPassWalletItemActivity;
 
 public class EditPassWalletItemActivityResult  extends ActivityResultContract<UserAccount, Intent> {
 
-    private AppCompatActivity appCompatActivity;
+    private final AppCompatActivity appCompatActivity;
 
     public EditPassWalletItemActivityResult(AppCompatActivity appCompatActivity) {
         super();
