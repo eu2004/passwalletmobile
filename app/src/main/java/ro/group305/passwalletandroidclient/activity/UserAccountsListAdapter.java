@@ -25,6 +25,7 @@ import java.util.Map;
 
 import ro.eu.passwallet.model.UserAccount;
 import ro.group305.passwalletandroidclient.model.UserAccountXmlUriDAO;
+import ro.group305.passwalletandroidclient.utils.ActivityUtils;
 
 class UserAccountsListAdapter extends BaseAdapter implements Filterable {
 
@@ -174,7 +175,12 @@ class UserAccountsListAdapter extends BaseAdapter implements Filterable {
         }
         final int size = accounts.size();
         final CharSequence[] options = new CharSequence[size];
-        accounts.toArray(options);
+        int i = 0;
+        for (Map<String, String> account : accounts) {
+            options[i++] = ActivityUtils.appendStrings(account.keySet().toString(),
+                    " ",
+                    account.values().toString());
+        }
         return options;
     }
 

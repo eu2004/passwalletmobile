@@ -69,11 +69,12 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         initSelectedWalletURI();
 
         openXmlFieActivity = registerForActivityResult(new OpenXmlFileActivityResult(), selectedWalletURI -> {
-            assert selectedWalletURI != null;
-            Log.i(TAG, selectedWalletURI.toString());
-            ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
-            selectedPassWalletURI = selectedWalletURI;
-            setSelectedPassWalletNameLabel();
+            if (selectedWalletURI != null) {
+                Log.i(TAG, selectedWalletURI.toString());
+                ActivityUtils.saveSelectedFileToPreferences(this, selectedWalletURI);
+                selectedPassWalletURI = selectedWalletURI;
+                setSelectedPassWalletNameLabel();
+            }
         });
     }
 
