@@ -18,7 +18,7 @@ public class CreateXmlFileActivityResult extends ActivityResultContract<String, 
     public Intent createIntent(@NonNull Context context, @NonNull String input) {
         return new Intent(Intent.ACTION_CREATE_DOCUMENT)
                 .addCategory(Intent.CATEGORY_OPENABLE)
-                .setType("text/xml");
+                .setType("application/xml");
     }
 
     @Nullable

@@ -18,7 +18,7 @@ public class OpenXmlFileActivityResult extends ActivityResultContract<String, Ur
     public Intent createIntent(@NonNull Context context, @NonNull String input) {
         return new Intent(Intent.ACTION_OPEN_DOCUMENT)
                 .addCategory(Intent.CATEGORY_OPENABLE)
-                .setType("text/xml");
+                .setType("application/xml");
     }
 
     @Nullable
