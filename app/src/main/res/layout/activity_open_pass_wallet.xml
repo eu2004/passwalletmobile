@@ -70,13 +70,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="@string/openPasswallet" />
+            android:text="@string/openPasswallet"
+            style="?android:attr/buttonBarButtonStyle" />
         <Button
             android:id="@+id/open_passwallet_fingerprint_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="@string/openFingerprintPasswallet" />
+            android:text="@string/openFingerprintPasswallet"
+            style="?android:attr/buttonBarButtonStyle" />
     </LinearLayout>
 
         <TextView
