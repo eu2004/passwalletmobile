@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ro.eu.passwallet.model.UserAccount;
+import ro.eu.passwallet.service.PasswordGenerator;
 import ro.group305.passwalletandroidclient.R;
 
 public class CreatePassWalletItemActivity extends AppCompatActivity {
@@ -17,6 +18,18 @@ public class CreatePassWalletItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pass_wallet_item);
         createCreatePasswalletItemButton();
+        createGeneratePasswordButton();
+    }
+
+    private void createGeneratePasswordButton() {
+        Button createPasswalletItemButton = findViewById(R.id.generate_password_button);
+        createPasswalletItemButton.setOnClickListener(v -> {
+            PasswordGenerator passwordGenerator = new PasswordGenerator();
+            passwordGenerator.setLength(16);
+            passwordGenerator.setIncludeSymbols(true);
+            EditText passwordEditText = findViewById(R.id.password_EditText);
+            passwordEditText.setText(passwordGenerator.generate());
+        });
     }
 
     private void createCreatePasswalletItemButton() {

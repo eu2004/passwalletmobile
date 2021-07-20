@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Easy Secured PassWallet</string>
-    <string name="version">3.1.4</string>
+    <string name="version">3.2</string>
 
     <string name="no">No</string>
     <string name="yes">Yes</string>
@@ -55,4 +55,5 @@
         …
         </USERSACCOUNTS>\n
         ]]></string>
+    <string name="generate_pass">Generate</string>
 </resources>
