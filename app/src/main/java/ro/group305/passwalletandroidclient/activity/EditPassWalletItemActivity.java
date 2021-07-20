@@ -2,10 +2,11 @@ package ro.group305.passwalletandroidclient.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import ro.eu.passwallet.model.UserAccount;
 import ro.eu.passwallet.service.PasswordGenerator;
@@ -25,9 +26,7 @@ public class EditPassWalletItemActivity extends AppCompatActivity {
     private void createGeneratePasswordButton() {
         Button createPasswalletItemButton = findViewById(R.id.generate_password_button);
         createPasswalletItemButton.setOnClickListener(v -> {
-            PasswordGenerator passwordGenerator = new PasswordGenerator();
-            passwordGenerator.setLength(16);
-            passwordGenerator.setIncludeSymbols(true);
+            PasswordGenerator passwordGenerator = GeneratePasswordActivity.getGeneratorFromPrefs(this);
             EditText passwordEditText = findViewById(R.id.password_EditText);
             passwordEditText.setText(passwordGenerator.generate());
         });

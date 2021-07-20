@@ -7,10 +7,10 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 
 public class ActivityUtils {
-    private ActivityUtils(){
+    private ActivityUtils() {
     }
 
-    public static String appendStrings(String ... args) {
+    public static String appendStrings(String... args) {
         StringBuilder stringBuilder = new StringBuilder();
         for (String arg : args) {
             stringBuilder.append(arg);
@@ -28,10 +28,19 @@ public class ActivityUtils {
     }
 
     public static void saveSelectedFileToPreferences(Activity activity, Uri selectedWalletURI) {
+        savePreference(activity, "selectedWalletURI", selectedWalletURI.toString());
+    }
+
+    public static void savePreference(Activity activity, String key, String value) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("selectedWalletURI", selectedWalletURI.toString());
+        editor.putString(key, value);
         editor.apply();
+    }
+
+    public static String getPreference(Activity activity, String key, String defaultValue) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
+        return sharedPreferences.getString(key, defaultValue);
     }
 
     public static String loadLastSelectedFile(Activity activity) {

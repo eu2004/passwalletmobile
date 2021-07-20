@@ -56,4 +56,12 @@
         </USERSACCOUNTS>\n
         ]]></string>
     <string name="generate_pass">Generate</string>
+    <string name="generate_pass_home"><a href="#">Generate Password</a></string>
+    <string name="gen_pass_include_pass">Include numbers</string>
+    <string name="gen_pass_include_uppercase">Include UpperCase</string>
+    <string name="gen_pass_include_lowercase">Include LowerCase</string>
+    <string name="gen_pass_include_symbols"><![CDATA[Include Symbols (!@#$%&..)]]></string>
+    <string name="copy_password_to_clipboard">Copy to Clipboard</string>
+    <string name="passwordLengthLabel">Length (Max is 256)</string>
+    <string name="reset_password_settings"><a href="#">Reset settings</a></string>
 </resources>

@@ -54,6 +54,10 @@
         <activity
             android:name=".activity.ViewPassWalletItemActivity"
             android:screenOrientation="fullSensor" />
+
+        <activity
+            android:name=".activity.GeneratePasswordActivity"
+            android:screenOrientation="fullSensor"/>
     </application>
 
 </manifest>

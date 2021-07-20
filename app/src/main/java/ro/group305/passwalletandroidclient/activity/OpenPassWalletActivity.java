@@ -65,6 +65,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         createOpenPasswalletFingerprintButton();
         createCreateNewPasswalletLink();
         createImportPasswalletLink();
+        createGeneratePasswordLink();
 
         initSelectedWalletURI();
 
@@ -241,6 +242,15 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         createNewPasswalletTextView.setOnClickListener(v -> {
             Log.d(TAG, "Import passwallet");
             Intent intent = new Intent(OpenPassWalletActivity.this, ImportPassWalletActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void createGeneratePasswordLink() {
+        TextView generatePasswordTextView = findViewById(R.id.generate_password_textview);
+        generatePasswordTextView.setOnClickListener(v -> {
+            Log.d(TAG, "Generate password");
+            Intent intent = new Intent(OpenPassWalletActivity.this, GeneratePasswordActivity.class);
             startActivity(intent);
         });
     }

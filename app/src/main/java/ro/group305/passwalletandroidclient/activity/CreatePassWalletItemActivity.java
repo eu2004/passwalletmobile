@@ -24,9 +24,7 @@ public class CreatePassWalletItemActivity extends AppCompatActivity {
     private void createGeneratePasswordButton() {
         Button createPasswalletItemButton = findViewById(R.id.generate_password_button);
         createPasswalletItemButton.setOnClickListener(v -> {
-            PasswordGenerator passwordGenerator = new PasswordGenerator();
-            passwordGenerator.setLength(16);
-            passwordGenerator.setIncludeSymbols(true);
+            PasswordGenerator passwordGenerator = GeneratePasswordActivity.getGeneratorFromPrefs(this);
             EditText passwordEditText = findViewById(R.id.password_EditText);
             passwordEditText.setText(passwordGenerator.generate());
         });
