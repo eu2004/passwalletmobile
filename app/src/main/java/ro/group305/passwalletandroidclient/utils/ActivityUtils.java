@@ -2,6 +2,7 @@ package ro.group305.passwalletandroidclient.utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -29,6 +30,8 @@ public class ActivityUtils {
 
     public static void saveSelectedFileToPreferences(Activity activity, Uri selectedWalletURI) {
         savePreference(activity, "selectedWalletURI", selectedWalletURI.toString());
+        activity.getContentResolver().takePersistableUriPermission(selectedWalletURI, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
     }
 
     public static void savePreference(Activity activity, String key, String value) {
@@ -44,7 +47,6 @@ public class ActivityUtils {
     }
 
     public static String loadLastSelectedFile(Activity activity) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
-        return sharedPreferences.getString("selectedWalletURI", "");
+        return getPreference(activity, "selectedWalletURI", "");
     }
 }
