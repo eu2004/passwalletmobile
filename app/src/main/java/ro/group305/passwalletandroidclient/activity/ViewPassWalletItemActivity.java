@@ -33,5 +33,8 @@ public class ViewPassWalletItemActivity extends EditPassWalletItemActivity {
 
         TextView editAccountLabelTextView = findViewById(R.id.edit_account_label_textView);
         editAccountLabelTextView.setVisibility(View.INVISIBLE);
+
+        Button generatePassButton = findViewById(R.id.generate_password_button);
+        generatePassButton.setVisibility(View.INVISIBLE);
     }
 }

@@ -49,6 +49,8 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         try {
             Intent intent = getIntent();
             Uri encryptedWalletFileURI = Uri.parse(intent.getStringExtra("encryptedWalletFileURI"));
+            ActivityUtils.saveSelectedFileToPreferences(this, encryptedWalletFileURI);
+
             String key = new String(intent.getByteArrayExtra("key"));
             CryptographyService cryptographyService = new CryptographyService(key);
             userAccountDAO = new UserAccountXmlUriDAO(encryptedWalletFileURI, getContentResolver(), cryptographyService);
