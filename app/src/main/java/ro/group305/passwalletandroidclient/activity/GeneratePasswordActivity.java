@@ -75,7 +75,13 @@ public class GeneratePasswordActivity extends AppCompatActivity {
             int length = Integer.parseInt(length_EditText.getText().toString());
             if (length > 256) {
                 length = 256;
+                length_EditText.setText("256");
             }
+            if (length < 4) {
+                length = 4;
+                length_EditText.setText("4");
+            }
+
             passwordGenerator.setLength(length);
             //
 
