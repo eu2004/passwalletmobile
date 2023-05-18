@@ -1,5 +1,7 @@
 package ro.group305.passwalletandroidclient.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -66,6 +68,7 @@ public class OpenPassWalletActivity extends AppCompatActivity {
         createCreateNewPasswalletLink();
         createImportPasswalletLink();
         createGeneratePasswordLink();
+        createClearClipboardLink();
 
         initSelectedWalletURI();
 
@@ -77,6 +80,21 @@ public class OpenPassWalletActivity extends AppCompatActivity {
                 setSelectedPassWalletNameLabel();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        clearClipboard();
+        super.onDestroy();
+    }
+
+    private void clearClipboard() {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        clipboard.setPrimaryClip(ClipData.newPlainText("user", " "));
+        //key
+        clipboard.setPrimaryClip(ClipData.newPlainText("key", " "));
+        //name
+        clipboard.setPrimaryClip(ClipData.newPlainText("name", " "));
     }
 
     private void checkBiometric() {
@@ -252,6 +270,14 @@ public class OpenPassWalletActivity extends AppCompatActivity {
             Log.d(TAG, "Generate password");
             Intent intent = new Intent(OpenPassWalletActivity.this, GeneratePasswordActivity.class);
             startActivity(intent);
+        });
+    }
+
+    private void createClearClipboardLink() {
+        TextView generatePasswordTextView = findViewById(R.id.clear_clipboard_textview);
+        generatePasswordTextView.setOnClickListener(v -> {
+            Log.d(TAG, "Clear clipboard");
+            clearClipboard();
         });
     }
 

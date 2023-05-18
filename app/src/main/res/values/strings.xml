@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Easy Secured PassWallet</string>
-    <string name="version">3.3.0</string>
+    <string name="version">3.3.1</string>
 
     <string name="no">No</string>
     <string name="yes">Yes</string>
@@ -10,7 +10,9 @@
     <string name="edit">Edit</string>
     <string name="view">View</string>
     <string name="copy">Copy</string>
+    <string name="copyUser">Copy User</string>
     <string name="copyKey">Copy Key</string>
+    <string name="clearClipboard">Clear Clipboard</string>
 
     <string name="enterPasswordLabel">Enter Key:</string>
     <string name="createPasswalletTitle">Create PassWallet</string>
@@ -57,6 +59,7 @@
         ]]></string>
     <string name="generate_pass">Generate</string>
     <string name="generate_pass_home"><a href="#">Generate Password</a></string>
+    <string name="clear_clipboard_home"><a href="#">Clear Clipboard</a></string>
     <string name="gen_pass_include_pass">Include numbers</string>
     <string name="gen_pass_include_uppercase">Include UpperCase</string>
     <string name="gen_pass_include_lowercase">Include LowerCase</string>

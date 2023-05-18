@@ -78,14 +78,22 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        clearClipboard();
+        super.onDestroy();
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId() == R.id.list_view) {
             Resources res = getResources();
             menu.add(res.getString(R.string.copy));
+            menu.add(res.getString(R.string.copyUser));
             menu.add(res.getString(R.string.copyKey));
             menu.add(res.getString(R.string.view));
             menu.add(res.getString(R.string.edit));
             menu.add(res.getString(R.string.delete));
+            menu.add(res.getString(R.string.clearClipboard));
         }
         super.onCreateContextMenu(menu, v, menuInfo);
     }
@@ -101,9 +109,15 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         if (res.getString(R.string.copy).contentEquals(item.getTitle())) {
             Log.d(TAG, userAccount.getNickName());
             copyInfoToClipboard(userAccount);
-        } else if (res.getString(R.string.copyKey).contentEquals(item.getTitle())) {
+        } else if (res.getString(R.string.copyUser).contentEquals(item.getTitle())) {
+            Log.d(TAG, userAccount.getNickName());
+            copyUserToClipboard(userAccount);
+        }else if (res.getString(R.string.copyKey).contentEquals(item.getTitle())) {
             Log.d(TAG, userAccount.getNickName());
             copyPasswordToClipboard(userAccount);
+        } else if (res.getString(R.string.clearClipboard).contentEquals(item.getTitle())) {
+            Log.d(TAG, "clear clipboard");
+            clearClipboard();
         } else if (res.getString(R.string.view).contentEquals(item.getTitle())) {
             Log.d(TAG, "View ...");
             viewUserAccount(userAccount);
@@ -116,6 +130,15 @@ public class ManagePassWalletActivity extends AppCompatActivity {
         }
 
         return super.onContextItemSelected(item);
+    }
+
+    private void clearClipboard() {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        clipboard.setPrimaryClip(ClipData.newPlainText("user", " "));
+        //key
+        clipboard.setPrimaryClip(ClipData.newPlainText("key", " "));
+        //name
+        clipboard.setPrimaryClip(ClipData.newPlainText("name", " "));
     }
 
     private void onEditItemActionResult(Intent data) {
@@ -180,6 +203,12 @@ public class ManagePassWalletActivity extends AppCompatActivity {
     private void copyPasswordToClipboard(UserAccount userAccount) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("key", userAccount.getPassword());
+        clipboard.setPrimaryClip(clip);
+    }
+
+    private void copyUserToClipboard(UserAccount userAccount) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("name", userAccount.getName());
         clipboard.setPrimaryClip(clip);
     }
 
